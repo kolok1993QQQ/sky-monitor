@@ -3,175 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sky Monitor | Tactical Interface</title>
+    <title>SKY MONITOR | COMMAND CENTER</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
             --neon: #00f2ff;
             --danger: #ff003c;
-            --bg-dark: #05070a;
-            --panel: rgba(13, 17, 23, 0.9);
+            --bg: #05070a;
+            --glass: rgba(13, 17, 23, 0.85);
             --border: rgba(0, 242, 255, 0.2);
-            --sidebar-w: 70px;
+            --sidebar-w: 80px;
         }
 
-        * { box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { 
             margin: 0; padding: 0; height: 100%; 
-            background: var(--bg-dark); 
-            font-family: 'JetBrains Mono', monospace; 
+            background: var(--bg); font-family: 'JetBrains Mono', monospace; 
             color: #fff; overflow: hidden;
         }
 
-        /* Фоновая сетка */
-        .grid-bg {
-            position: fixed; inset: 0;
+        /* ФОНОВА СІТКА */
+        body::before {
+            content: ""; position: absolute; inset: 0;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), 
                               linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px; opacity: 0.1; pointer-events: none;
+            background-size: 40px 40px; opacity: 0.1; z-index: 0; pointer-events: none;
         }
 
-        .layout { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 2; }
+        .app-container { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1; }
 
-        /* HEADER */
+        /* ШАПКА */
         header {
-            height: 60px; background: var(--panel); backdrop-filter: blur(10px);
+            height: 70px; background: var(--glass); backdrop-filter: blur(15px);
             border-bottom: 2px solid var(--neon); display: flex; align-items: center;
-            padding: 0 20px; gap: 20px; flex-shrink: 0;
-            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1);
+            padding: 0 20px; gap: 15px; flex-shrink: 0; z-index: 100;
+        }
+
+        .menu-toggle {
+            display: none; font-size: 24px; color: var(--neon); cursor: pointer;
+            padding: 10px; border-radius: 8px; background: rgba(0, 242, 255, 0.05);
         }
 
         .logo {
-            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px;
-            color: var(--neon); letter-spacing: 3px; text-transform: uppercase;
-            border: 1px solid var(--neon); padding: 5px 10px; border-radius: 4px;
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 18px;
+            color: var(--neon); letter-spacing: 2px;
         }
 
-        .top-stats {
-            display: flex; align-items: center; gap: 15px; border-left: 1px solid var(--border);
-            padding-left: 20px;
+        .clock-box {
+            background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 6px;
+            border-left: 3px solid var(--danger); margin-left: 10px;
         }
+        #clock { font-size: 18px; font-weight: 800; color: #fff; }
 
-        #clock { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-
-        .sys-info {
-            font-size: 10px; color: var(--danger); font-weight: 800;
-            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
-        }
-
-        .dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
-
-        /* MAIN CONTENT */
-        .main-container { display: flex; flex-grow: 1; overflow: hidden; }
-
-        /* SIDEBAR */
-        aside {
-            width: var(--sidebar-w); background: var(--panel); 
-            border-right: 1px solid var(--border); display: flex;
-            flex-direction: column; align-items: center; padding: 20px 0; gap: 25px;
-            transition: width 0.3s;
-        }
-
-        .nav-link {
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            border-radius: 8px; border: 1px solid transparent; color: rgba(255,255,255,0.4);
-            cursor: pointer; transition: 0.3s; position: relative; font-size: 18px;
-        }
-
-        .nav-link:hover { color: var(--neon); background: rgba(0, 242, 255, 0.05); border-color: var(--border); }
-        .nav-link.active {
-            color: var(--neon); background: rgba(0, 242, 255, 0.1);
-            border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
-        }
-
-        /* VIEWPORT */
-        .viewport { flex-grow: 1; padding: 15px; position: relative; }
+        /* ГРУПА КНОПОК ЗВЕРХУ */
+        .top-nav-buttons { margin-left: auto; display: flex; gap: 12px; }
         
-        .monitor-frame {
-            width: 100%; height: 100%; border: 1px solid var(--border);
-            background: #000; border-radius: 8px; overflow: hidden;
-            box-shadow: inset 0 0 50px rgba(0,0,0,1); position: relative;
+        .header-btn {
+            padding: 8px 16px; border-radius: 6px; text-decoration: none;
+            font-size: 12px; font-weight: 800; text-transform: uppercase;
+            display: flex; align-items: center; gap: 8px;
+            transition: 0.3s; border: 1px solid transparent;
         }
 
-        /* Линия сканирования */
-        .monitor-frame::after {
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: rgba(0, 242, 255, 0.1); animation: scan 4s linear infinite; pointer-events: none;
+        .btn-tg { 
+            background: rgba(0, 136, 204, 0.1); color: #0088cc; border-color: #0088cc;
+            box-shadow: 0 0 10px rgba(0, 136, 204, 0.2);
+            animation: breathe 3s infinite;
         }
-        @keyframes scan { from { top: 0; } to { top: 100%; } }
+        .btn-tg:hover { background: #0088cc; color: #fff; box-shadow: 0 0 20px #0088cc; }
 
+        .btn-donate { 
+            background: rgba(255, 215, 0, 0.1); color: #ffd700; border-color: #ffd700;
+        }
+        .btn-donate:hover { background: #ffd700; color: #000; box-shadow: 0 0 20px #ffd700; }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        /* ОСНОВНА ЧАСТИНА */
+        .content-wrap { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
+
+        /* БІЧНА ПАНЕЛЬ */
+        aside {
+            width: var(--sidebar-w); background: var(--glass);
+            border-right: 1px solid var(--border); display: flex;
+            flex-direction: column; align-items: center; padding: 25px 0; gap: 20px;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 99;
+        }
+
+        .nav-icon {
+            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
+            font-size: 20px; color: rgba(255,255,255,0.4); cursor: pointer;
+            transition: 0.3s; border-radius: 12px; border: 1px solid transparent;
+            position: relative;
+        }
+
+        .nav-icon:hover { color: var(--neon); background: rgba(0, 242, 255, 0.05); }
+        .nav-icon.active {
+            color: var(--neon); background: rgba(0, 242, 255, 0.1);
+            border-color: var(--neon); box-shadow: 0 0 20px rgba(0, 242, 255, 0.15);
+        }
+
+        /* ЕКРАНИ */
+        main { flex-grow: 1; padding: 15px; background: rgba(0,0,0,0.3); }
+        .screen {
+            width: 100%; height: 100%; border-radius: 15px; overflow: hidden;
+            border: 1px solid var(--border); background: #000; box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
 
-        /* Кнопка ТГ */
-        .tg-link {
-            margin-left: auto; color: var(--neon); text-decoration: none;
-            font-size: 22px; transition: 0.3s;
-        }
-        .tg-link:hover { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--neon)); }
-
-        /* MOBILE OPTIMIZATION */
+        /* МОБІЛЬНА ВЕРСІЯ */
         @media (max-width: 768px) {
-            .main-container { flex-direction: column; }
+            .menu-toggle { display: block; }
+            .logo { font-size: 14px; }
+            .top-nav-buttons .header-btn span { display: none; } /* Ховаємо текст кнопок */
+            
             aside {
-                width: 100%; height: 65px; flex-direction: row; order: 2;
-                border-right: none; border-top: 2px solid var(--neon);
-                justify-content: space-around; padding: 0 10px;
+                position: absolute; left: 0; top: 0; bottom: 0;
+                transform: translateX(-100%); /* Схована за екраном */
+                width: 90px; height: 100%; background: #0d1117;
             }
-            .nav-link.active { border-radius: 0; border-width: 0 0 3px 0; background: none; box-shadow: none; }
-            .viewport { padding: 8px; margin-bottom: 65px; }
-            .top-stats { gap: 10px; padding-left: 10px; }
-            #clock { font-size: 16px; }
-            .logo span { display: none; }
+            aside.open { transform: translateX(0); box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
+            
+            main { padding: 8px; }
         }
     </style>
 </head>
 <body>
 
-<div class="grid-bg"></div>
-
-<div class="layout">
+<div class="app-container">
     <header>
-        <div class="logo">SKY<span>-MONITOR</span></div>
-        <div class="top-stats">
-            <div id="clock">00:00:00</div>
-            <div class="sys-info">
-                <div class="dot"></div> System Active
-            </div>
+        <div class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
         </div>
-        <a href="https://t.me/manitoringkiev" target="_blank" class="tg-link">
-            <i class="fa-brands fa-telegram"></i>
-        </a>
+        
+        <div class="logo">SKY MONITOR</div>
+        
+        <div class="clock-box">
+            <div id="clock">00:00:00</div>
+        </div>
+
+        <div class="top-nav-buttons">
+            <a href="https://t.me/manitoringkiev" target="_blank" class="header-btn btn-tg">
+                <i class="fa-brands fa-telegram"></i> <span>Telegram</span>
+            </a>
+            <a href="#" class="header-btn btn-donate">
+                <i class="fa-solid fa-heart"></i> <span>Донат</span>
+            </a>
+        </div>
     </header>
 
-
-    </header>
-
-    <div class="main-container">
-        <aside>
-            <div class="nav-link active" onclick="tab('m1', this)" title="Alerts Map">
+    <div class="content-wrap">
+        <aside id="sidebar">
+            <div class="nav-icon active" onclick="tab('m1', this)">
                 <i class="fa-solid fa-satellite-dish"></i>
             </div>
-            <div class="nav-link" onclick="tab('m2', this)" title="DeepState Map">
-                <i class="fa-solid fa-crosshairs"></i>
+            <div class="nav-icon" onclick="tab('m2', this)">
+                <i class="fa-solid fa-map-marked-alt"></i>
             </div>
-            <div class="nav-link" onclick="tab('m3', this)" title="Air Traffic">
+            <div class="nav-icon" onclick="tab('m3', this)">
                 <i class="fa-solid fa-plane-up"></i>
             </div>
-            <div class="nav-link" onclick="tab('m4', this)" title="Radio Monitoring">
-                <i class="fa-solid fa-signal"></i>
+            <div class="nav-icon" onclick="tab('m4', this)">
+                <i class="fa-solid fa-radio"></i>
             </div>
-            <div class="nav-link" onclick="tab('m5', this)" title="Meteo">
-                <i class="fa-solid fa-cloud-moon-bolt"></i>
+            <div class="nav-icon" onclick="tab('m5', this)">
+                <i class="fa-solid fa-cloud-bolt"></i>
             </div>
         </aside>
 
-        <main class="viewport">
-            <div class="monitor-frame">
+        <main onclick="closeSidebar()">
+            <div class="screen">
                 <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
                 <iframe id="m2" src="https://deepstatemap.live/"></iframe>
                 <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
@@ -183,15 +192,28 @@
 </div>
 
 <script>
-    function tab(id, btn) {
-        document.querySelectorAll('iframe, .nav-link').forEach(el => el.classList.remove('active'));
+    // Функція перемикання розділів
+    function tab(id, el) {
+        document.querySelectorAll('iframe, .nav-icon').forEach(i => i.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
+        el.classList.add('active');
+        
+        // Закриваємо меню після вибору на телефоні
+        if(window.innerWidth <= 768) closeSidebar();
     }
 
+    // Функції для бічної панелі на телефоні
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function closeSidebar() {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+
+    // Годинник
     function updateClock() {
-        const now = new Date();
-        document.getElementById('clock').innerText = now.toLocaleTimeString('uk-UA', { 
+        document.getElementById('clock').innerText = new Date().toLocaleTimeString('uk-UA', { 
             timeZone: 'Europe/Kyiv', 
             hour12: false 
         });
