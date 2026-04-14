@@ -28,7 +28,7 @@
         .header { 
             height: 85px; display: flex; align-items: center; padding: 0 20px; 
             background: var(--card); backdrop-filter: blur(15px); 
-            border-bottom: 2px solid var(--accent); z-index: 10;
+            border-bottom: 2px solid var(--accent); z-index: 10; flex-shrink: 0;
         }
         
         .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
@@ -47,6 +47,7 @@
             display: flex; align-items: center; gap: 6px; text-transform: uppercase;
         }
         
+        /* АНІМОВАНИЙ РАДАР */
         .radar-dot { 
             position: relative; width: 8px; height: 8px; background: var(--danger); 
             border-radius: 50%; box-shadow: 0 0 8px var(--danger);
@@ -61,8 +62,18 @@
             100% { transform: scale(2.5); opacity: 0; }
         }
 
+        /* БІЖУЧИЙ РЯДОК */
         .marquee-container {
             background: #000; color: var(--accent); padding: 6px 0;
             font-size: 11px; font-weight: 800; border-bottom: 1px solid #30363d;
-            overflow: hidden; white-space: nowrap;
+            overflow: hidden; white-space: nowrap; flex-shrink: 0;
         }
+        .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+        /* КНОПКИ */
+        .btn-group { margin-left: auto; display: flex; gap: 10px; }
+        .neon-btn {
+            padding: 10px 14px; border-radius: 8px; text-decoration: none; 
+            font-weight: 900; font-size: 11px; transition: 0.3s;
+            text-transform: uppercase; border:
