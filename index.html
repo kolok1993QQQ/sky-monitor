@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UA Sky Monitor — LIVE Edition</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --bg: #05080a;
+            --accent: #ff3e3e;
+            --panel-bg: rgba(10, 15, 20, 0.85);
+            --border: rgba(0, 255, 136, 0.2);
+            --neon-green: #00ff88;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
+        #map { height: 100vh; width: 100vw; z-index: 1; }
+
+        .sidebar {
+            position: absolute; top: 20px; right: 20px; width: 320px; z-index: 1000;
+            display: flex; flex-direction: column; gap: 15px; max-height: 90vh;
+        }
+
+        .glass-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+
+        .header-title { color: var(--neon-green); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+
+        .target-list { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .target-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .target-card .time { color: #888; font-size: 11px; }
+        .target-card .direction { color: var(--neon-green); font-weight: bold; }
+
+        .bottom-bar {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; display: flex; gap: 20px;
+        }
+
+        .stat-item { text-align: center; border-right: 1px solid var(--border); padding-right: 20px; }
+        .stat-item:last-child { border: none; }
+        .stat-val { font-size: 24px; font-weight: bold; color: var(--neon-green); }
+        .stat-label { font-size: 10px; opacity: 0.7; text-transform: uppercase; }
+
+        .pulse { width: 10px; height: 10px; background: var(--accent); border-radius: 50%; display: inline-block; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div class="sidebar">
+        <div class="glass-card">
+            <div class="header-title">
+                <span>МОНІТОР UA</span>
+                <span class="pulse"></span>
+            </div>
+            <div id="status-text" style="font-size: 11px; opacity: 0.8; color: #00ff88;">З’єднання з сервером...</div>
+        </div>
+
+        <div class="glass-card" style="flex-grow: 1;">
+            <div class="header-title" style="font-size: 14px;">Цілі в повітрі</div>
+            <div id="target-list" class="target-list">
+                <div style="text-align: center; opacity: 0.5; padding: 20px;">Загроз не виявлено</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar glass-card">
+        <div class="stat-item">
+            <div class="stat-val" id="total-targets">0</div>
+            <div class="stat-label">Всього цілей</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-val" style="color: #ff9900;" id="threat-lvl">LOW</div>
+            <div class="stat-label">Рівень загрози</div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // База координат міст
+        const cityCoords = {
+            "Київ": [50.45, 30.52], "Умань": [48.74, 30.22], "Одеса": [46.48, 30.72],
+            "Харків": [49.99, 36.23], "Дніпро": [48.46, 35.04], "Миколаїв": [46.97, 31.99],
+            "Запоріжжя": [47.83, 35.13], "Львів": [49.83, 24.02], "Полтава": [49.58, 34.55],
+            "Суми": [50.90, 34.79], "Вінниця": [49.23, 28.46], "Чернігів": [51.49, 31.28]
+        };
+
+        const map = L.map('map', { zoomControl: false, attributionControl: false }).setView(
