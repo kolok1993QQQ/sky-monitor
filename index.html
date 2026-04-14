@@ -3,105 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Burasik | Digital Space</title>
+    <title>SKY MONITOR | Operational Dashboard</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        :root {
+            --bg-color: #0a0a0b;
+            --panel-bg: #141417;
+            --accent: #e63946; /* Колір тривоги */
+            --text-main: #e0e0e0;
+            --text-dim: #888;
+            --border: #2a2a2e;
+        }
+
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 50px;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .profile-img {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, #00dbde, #fc00ff);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        h1 {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            letter-spacing: -1px;
-        }
-
-        p {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .nav-links {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: center;
+            min-height: 100vh;
         }
 
-        .link-item {
-            background: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            padding: 14px;
-            border-radius: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
+        header {
+            width: 100%;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
         }
 
-        .link-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
+        .logo {
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .dot {
-            height: 8px;
-            width: 8px;
-            background-color: #00ff88;
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
             border-radius: 50%;
-            display: inline-block;
-            margin-right: 8px;
-            box-shadow: 0 0 10px #00ff88;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        main {
+            width: 90%;
+            max-width: 1000px;
+            margin-top: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--panel-bg);
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+
+        .target-list {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .target-header {
+            padding: 15px 20px;
+            background: #1c1c21;
+            border-bottom: 1px solid var(--border);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .target-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            align-items: center;
+        }
+
+        .target-item:last-child { border-bottom: none; }
+
+        .type-badge {
+            background: rgba(230, 57, 70, 0.15);
+            color: var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-align: center;
+            width: fit-content;
+        }
+
+        .location { font-weight: 600; }
+        .time { color: var(--text-dim); text-align: right; font-size: 0.9rem; }
+
+        .no-targets {
+            padding: 40px;
+            text-align: center;
+            color: var(--text-dim);
         }
     </style>
 </head>
 <body>
 
-    <div class="glass-card">
-        <div class="profile-img">E</div>
-        <h1>En0T1k_UA</h1>
-        <p><span class="dot"></span> Online Presence & Web Dev</p>
-        
-        <div class="nav-links">
-            <a href="https://sky-monitor.fun" class="link-item">🛰 Sky Monitor Project</a>
-            <a href="#" class="link-item">🎮 Gaming Stream</a>
-            <a href="#" class="link-item">💻 GitHub Profile</a>
-            <a href="#" class="link-item">📱 Telegram Channel</a>
+    <header>
+        <div class="logo">
+            <div class="live-indicator"></div>
+            SKY MONITOR HUB
         </div>
-    </div>
+        <div style="font-size: 0.8rem; color: var(--text-dim);">SOURCE: ПС ЗСУ / VANEK</div>
+    </header>
 
-</body>
-</html>
+    <main>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div style="color: var(--text-dim); font-size: 0.8rem;">СТАТУС СИСТЕМИ</div>
+                <div style="font-size: 1.2rem; margin-top: 5px; color: #00ff88;">АКТИВНО</div>
+            </div>
+            <div class="stat-card">
+                <div style="color: var(--text-dim); font-size: 0.8rem;">ОБ'ЄКТІВ ПІД ПРИЦІЛОМ</div>
+                <div id="target-count" style="font-size: 1.2rem; margin-top: 5px;">0</div>
+            </div>
+        </div>
+
+        <div class="target-list">
+            <div class="target-header">
+                <span>ПОТОЧНІ ЦІЛІ</span>
+                <span style="font-size: 0.7rem; letter-spacing: 1px;">REAL-TIME DATA</span>
+            </div>
+            <div id="targets-container">
+                <div class="no-targets">Загроз не виявлено. Небо чисте.</div>
+            </div>
+        </div>
+    </main>
