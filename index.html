@@ -48,16 +48,19 @@
             display: flex; align-items: center; gap: 6px; text-transform: uppercase;
         }
         
-        /* МИГАЮЧИЙ КРУЖОК */
-        .blink-dot { 
-            width: 8px; height: 8px; background: var(--danger); 
-            border-radius: 50%; animation: pulse-red 1s infinite;
-            box-shadow: 0 0 8px var(--danger);
+        /* АНІМОВАНИЙ РАДАР */
+        .radar-dot { 
+            position: relative; width: 8px; height: 8px; background: var(--danger); 
+            border-radius: 50%; box-shadow: 0 0 8px var(--danger);
         }
-        @keyframes pulse-red {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
+        .radar-dot::after {
+            content: ''; position: absolute; top: -4px; left: -4px;
+            width: 16px; height: 16px; border: 2px solid var(--danger);
+            border-radius: 50%; animation: radar-pulse 1.5s infinite; opacity: 0;
+        }
+        @keyframes radar-pulse {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
         }
 
         /* БІЖУЧИЙ РЯДОК */
@@ -69,7 +72,7 @@
         .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
 
-        /* КНОПКИ */
+        /* КНОПКИ ШАПКИ */
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
         .neon-btn {
             padding: 10px 14px; border-radius: 8px; text-decoration: none; 
@@ -81,14 +84,36 @@
         .btn-donate { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
         .neon-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
-        /* НАВІГАЦІЯ */
+        /* НАВІГАЦІЯ ТА АНІМАЦІЯ СМАЙЛІВ */
         .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; background: rgba(0,0,0,0.4); }
         .nav-btn {
             background: #1c2128; border: 1px solid #30363d; color: #8b949e;
             padding: 12px 20px; border-radius: 10px; cursor: pointer; 
             font-weight: 800; font-size: 13px; flex-shrink: 0; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px;
         }
         .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
+
+        /* Анімації для іконок */
+        .ani-shake { display: inline-block; animation: shake 2s infinite ease-in-out; }
+        .ani-fly { display: inline-block; animation: fly 3s infinite ease-in-out; }
+        .ani-rotate { display: inline-block; animation: rotate 4s infinite linear; }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        @keyframes fly {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-4px) translateX(2px); }
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-btn:hover .ani-shake { animation-duration: 0.5s; }
 
         /* В'ЮПОРТ */
         .viewport { flex-grow: 1; margin: 0 10px 10px 10px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
@@ -100,12 +125,12 @@
 
 <div class="wrapper">
     <header class="header">
-        <div class="brand">Sky Monitor<br>OSINT HUB</div>
+        <div class="brand">Sky Monitor|<br>OSINT HUB</div>
         
         <div class="status-container">
             <div id="kyiv-time">00:00:00</div>
             <div class="sys-status">
-                <div class="blink-dot"></div> СИСТЕМА АКТИВНА
+                <div class="radar-dot"></div> СИСТЕМА АКТИВНА
             </div>
         </div>
 
@@ -123,11 +148,11 @@
     </div>
 
     <nav class="nav-container">
-        <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
-        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
-        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
-        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
-        <button class="nav-btn" onclick="tab('m5', this)">⛈️ ПОГОДА</button>
+        <button class="nav-btn active" onclick="tab('m1', this)"><span class="ani-shake">🚨</span> ТРИВОГИ</button>
+        <button class="nav-btn" onclick="tab('m2', this)"><span class="ani-shake">⚔️</span> КАРТА</button>
+        <button class="nav-btn" onclick="tab('m3', this)"><span class="ani-fly">✈️</span> АВІА</button>
+        <button class="nav-btn" onclick="tab('m4', this)"><span class="ani-rotate">📻</span> РАДІО</button>
+        <button class="nav-btn" onclick="tab('m5', this)"><span class="ani-shake">⛈️</span> ПОГОДА</button>
     </nav>
 
     <main class="viewport">
