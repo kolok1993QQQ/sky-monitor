@@ -3,47 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sky Monitor | Tactical OSINT</title>
+    <title>Sky Monitor | Tactical Interface</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@600;900&display=swap" rel="stylesheet">
 
     <style>
-        :root { 
-            --accent: #00f2ff; /* Циан */
-            --bg: #080a0c; 
-            --panel-bg: rgba(13, 17, 23, 0.8);
-            --border-color: rgba(0, 242, 255, 0.15);
-            --danger-red: #ff3e3e;
-            --sidebar-width: 75px;
+        :root {
+            --neon: #00f2ff;
+            --danger: #ff003c;
+            --bg-dark: #05070a;
+            --panel: rgba(13, 17, 23, 0.9);
+            --border: rgba(0, 242, 255, 0.2);
+            --sidebar-w: 70px;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
+        * { box-sizing: border-box; outline: none; }
         body, html { 
             margin: 0; padding: 0; height: 100%; 
-            background: var(--bg); 
-            font-family: 'Inter', sans-serif; 
-            color: #e6edf3; overflow: hidden;
+            background: var(--bg-dark); 
+            font-family: 'JetBrains Mono', monospace; 
+            color: #fff; overflow: hidden;
         }
 
-        /* Декоративная сетка на фоне */
-        body::before {
-            content: ""; position: absolute; inset: 0;
-            background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
-            background-size: 30px 30px; opacity: 0.2; pointer-events: none; z-index: 0;
+        /* Фоновая сетка */
+        .grid-bg {
+            position: fixed; inset: 0;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), 
+                              linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 40px 40px; opacity: 0.1; pointer-events: none;
         }
 
-        .app-wrapper {
-            display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1;
+        .layout { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 2; }
+
+        /* HEADER */
+        header {
+            height: 60px; background: var(--panel); backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--neon); display: flex; align-items: center;
+            padding: 0 20px; gap: 20px; flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1);
         }
 
-        /* МОДУЛЬНАЯ ШАПКА */
-        .top-bar {
-            height: 60px; display: flex; align-items: center; padding: 0 20px;
-            background: var(--panel-bg); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+        .logo {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 16px;
+            color: var(--neon); letter-spacing: 3px; text-transform: uppercase;
+            border: 1px solid var(--neon); padding: 5px 10px; border-radius: 4px;
         }
 
-        .logo-box {
-            font
+        .top-stats {
+            display: flex; align-items: center; gap: 15px; border-left: 1px solid var(--border);
+            padding-left: 20px;
+        }
+
+        #clock { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
+
+        .sys-info {
+            font-size: 10px; color: var(--danger); font-weight: 800;
+            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
+        }
+
+        .dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
+
+        /* MAIN CONTENT */
+        .main-container { display: flex; flex-grow: 1; overflow: hidden; }
+
+        /* SIDEBAR */
+        aside {
+            width: var(--sidebar-w); background: var(--panel); 
+            border-right: 1px solid var(--border); display: flex;
+            flex-direction: column; align-items: center; padding: 20px 0; gap: 25px;
+            transition: width 0.3s;
+        }
+
+        .nav-link {
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; border: 1px solid transparent; color: rgba(255,255,255,0.4);
+            cursor: pointer; transition: 0.3s; position: relative; font-size: 18px;
+        }
+
+        .nav-link:hover { color: var(--neon); background: rgba(0, 242, 255, 0.05); border-color: var(--border); }
+        .nav-link.active {
+            color: var(--neon); background: rgba(0, 242, 255, 0.1);
+            border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        /* VIEWPORT */
+        .viewport { flex-grow: 1; padding: 15px; position: relative; }
+        
+        .monitor-frame {
+            width: 100%; height: 100%; border: 1px solid var(--border);
+            background: #000; border-radius: 8px; overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,1); position: relative;
+        }
+
+        /* Линия сканирования */
+        .monitor-frame::after {
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: rgba(0, 242, 255, 0.1); animation: scan 4s linear infinite; pointer-events: none;
+        }
+        @keyframes scan { from { top: 0; } to { top: 100%; } }
+
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+        iframe.active { display: block; }
+
+        /* Кнопка ТГ */
+        .tg-link {
+            margin-left: auto; color: var(--neon); text-decoration: none;
+            font-size: 22px; transition: 0.3s;
+        }
+        .tg-link:hover { transform: scale(1.1); filter: drop-shadow(0 0 5px var(--neon)); }
+
+        /* MOBILE OPTIMIZATION */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            aside {
+                width: 100%; height: 65px; flex-direction: row; order: 2;
+                border-right: none; border-top: 2px solid var(--neon);
+                justify-content: space-around; padding: 0 10px;
+            }
+            .nav-link.active { border-radius: 0; border-width: 0 0 3px 0; background: none; box-shadow: none; }
+            .viewport { padding: 8px; margin-bottom: 65px; }
+            .top-stats { gap: 10px; padding-left: 10px; }
+            #clock { font-size: 16px; }
+            .logo span { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="layout">
+    <header>
+        <div class="logo">SKY<span>-MONITOR</span></div>
+        <div class="top-stats">
+            <div id="clock">00:00:00</div>
+            <div class="sys-info">
+                <div class="dot"></div> System Active
+            </div>
+        </div>
+        <a href="https://t.me/manitoringkiev" target="_blank" class="tg-link">
+            <i class="fa-brands fa-telegram"></i>
+        </a>
+    </header>
+
+    <div class="main-container">
+        <aside>
+            <div class="nav-link active" onclick="tab('m1', this)" title="Alerts Map">
+                <i class="fa-solid fa-satellite-dish"></i>
+            </div>
+            <div class="nav-link" onclick="tab('m2', this)" title="DeepState Map">
+                <i class="fa-solid fa-crosshairs"></i>
+            </div>
+            <div class="nav-link" onclick="tab('m3', this)" title="Air Traffic">
+                <i class="fa-solid fa-plane-up"></i>
+            </div>
+            <div class="nav-link" onclick="tab('m4', this)" title="Radio Monitoring">
+                <i class="fa-solid fa-signal"></i>
+            </div>
+            <div class="nav-link" onclick="tab('m5', this)" title="Meteo">
+                <i class="fa-solid
