@@ -3,157 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKY MONITOR | Operational Dashboard</title>
+    <title>SKY MONITOR | Мапа Тривог UA</title>
     <style>
         :root {
-            --bg-color: #0a0a0b;
-            --panel-bg: #141417;
-            --accent: #e63946; /* Колір тривоги */
-            --text-main: #e0e0e0;
-            --text-dim: #888;
+            --bg: #0f1014;
+            --map-bg: #1a1b1f;
+            --text: #e0e0e0;
             --border: #2a2a2e;
+            --alarm: #e63946; /* Червоний колір тривоги */
+            --safe: #2a2a2e;  /* Сірий колір, коли безпечно */
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
         }
 
         header {
             width: 100%;
-            padding: 20px;
+            padding: 15px 30px;
+            background: rgba(15, 16, 20, 0.9);
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--panel-bg);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
         }
 
-        .logo {
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        h1 { margin: 0; font-size: 1.3rem; color: #fff; }
+        #last-update { font-size: 0.8rem; color: #888; }
 
-        .live-indicator {
-            width: 10px;
-            height: 10px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: blink 1.5s infinite;
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.3; }
-            100% { opacity: 1; }
-        }
-
-        main {
+        .map-container {
+            margin-top: 80px; /* Відступ від хедеру */
             width: 90%;
             max-width: 1000px;
-            margin-top: 30px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: var(--panel-bg);
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-        }
-
-        .target-list {
-            background: var(--panel-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .target-header {
-            padding: 15px 20px;
-            background: #1c1c21;
-            border-bottom: 1px solid var(--border);
-            font-weight: bold;
+            height: 80vh;
             display: flex;
-            justify-content: space-between;
-        }
-
-        .target-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border);
-            display: grid;
-            grid-template-columns: 1fr 2fr 1fr;
             align-items: center;
+            justify-content: center;
         }
 
-        .target-item:last-child { border-bottom: none; }
+        /* Стилізація областей на карті */
+        svg {
+            width: 100%;
+            height: 100%;
+            fill: var(--safe);
+            stroke: var(--bg);
+            stroke-width: 0.5;
+            transition: fill 0.5s ease;
+        }
 
-        .type-badge {
-            background: rgba(230, 57, 70, 0.15);
-            color: var(--accent);
-            padding: 4px 10px;
-            border-radius: 6px;
+        /* Клас, який ми будемо додавати областям при тривозі */
+        .is-alarm {
+            fill: var(--alarm) !important;
+        }
+
+        path:hover {
+            fill: #333;
+            cursor: pointer;
+        }
+
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(26, 27, 31, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
             font-size: 0.8rem;
-            font-weight: bold;
-            text-align: center;
-            width: fit-content;
         }
 
-        .location { font-weight: 600; }
-        .time { color: var(--text-dim); text-align: right; font-size: 0.9rem; }
-
-        .no-targets {
-            padding: 40px;
-            text-align: center;
-            color: var(--text-dim);
-        }
+        .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .color-box { width: 12px; height: 12px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">
-            <div class="live-indicator"></div>
-            SKY MONITOR HUB
+        <div>
+            <h1>Мапа повітряних тривог</h1>
+            <div id="last-update">Оновлення...</div>
         </div>
-        <div style="font-size: 0.8rem; color: var(--text-dim);">SOURCE: ПС ЗСУ / VANEK</div>
+        <div id="status-text" style="color: #00ff88;">✅ З'єднання встановлено</div>
     </header>
 
-    <main>
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div style="color: var(--text-dim); font-size: 0.8rem;">СТАТУС СИСТЕМИ</div>
-                <div style="font-size: 1.2rem; margin-top: 5px; color: #00ff88;">АКТИВНО</div>
-            </div>
-            <div class="stat-card">
-                <div style="color: var(--text-dim); font-size: 0.8rem;">ОБ'ЄКТІВ ПІД ПРИЦІЛОМ</div>
-                <div id="target-count" style="font-size: 1.2rem; margin-top: 5px;">0</div>
-            </div>
-        </div>
-
-        <div class="target-list">
-            <div class="target-header">
-                <span>ПОТОЧНІ ЦІЛІ</span>
-                <span style="font-size: 0.7rem; letter-spacing: 1px;">REAL-TIME DATA</span>
-            </div>
-            <div id="targets-container">
-                <div class="no-targets">Загроз не виявлено. Небо чисте.</div>
-            </div>
-        </div>
-    </main>
+    <div class="map-container">
+        <svg id="ukraine-map" viewBox="0 0 1000 660">
+            <path id="UA-43" d="M850 580 C 860 590, 870 595, 880 590 L 900 600 C 910 610, 920 610, 930 600 L 940 580 C 930 570, 920 560, 910 560 L 890 570 L 880 560 L 870 570 Z"></path>
+            <path id="UA-51" d="M720 550 L 740 560 L 750 580 C 760 590, 770 595, 780 590 L 800 600 C 810 610, 820 610, 830 600 L 840 580 C 830 570, 820 560, 810 560 L 790 570 L 780 560 L 770 570 Z"></path>
+            <path id="UA-48" d="M780 520 L 800 530 L 820 520 L 830 540 L 820 560 L 800 570 L 780 560 L 770 550 Z"></path>
+            <path id="UA-65" d="M830 540 L 850 550 L 860 570 C 870 580, 880 585, 890 580 L 910 590 C 920 600, 930 600, 940 590 L 950 570 C 940 560, 930 550, 920 550 L 900 560 L 890 550 L 880 560 Z"></path>
+            <path id="UA-23" d="M870 510 L 890 520 L 910 510 L 920 530 L 910 550 L 890 560 L 870 550 L 860 540 Z"></path>
+            <path id="UA-14" d="M920 450 L 940 460 L 960 450 L 970 470 L 960 490 L 940 500 L 920 490 L 910 480 Z"></path>
+            <path id="UA-09" d="M950 390 L 970 400 L 990 390 L 1000 410 L 990 430 L 970 440 L 950 430 L 940 420 Z"></path>
+            <path id="UA-63" d="M910 370 L 930 380 L 950 370 L 960 390 L 950 410 L 930 420 L 910 410 L 900 400 Z"></path>
+            <path id="UA-12" d="M850 430 L 870 440 L 890 430 L 900 450 L 890 470 L 870 480 L 850 470 L 840 460 Z"></path>
+            <path id="UA-53" d="M830 350 L 850 360 L 8
