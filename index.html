@@ -6,45 +6,75 @@
     <title>Sky Monitor | МОНІТОР НЕБА</title>
     
     <style>
-        :root {
-            --accent: #00f2ff;
-            --bg: #0d1117;
-            --card: #161b22;
+        :root { 
+            --accent: #00f2ff; 
+            --bg: #0d1117; 
+            --card: #161b22; 
             --danger: #ff003c;
+            --support-green: #39d353;
+            --gold: #ffd700;
         }
 
-        /* Виправлення висоти: Grid замість Flex для стабільності */
-        body, html {
+        body, html { 
             margin: 0; padding: 0; height: 100vh; width: 100vw;
-            background: var(--bg); font-family: 'Inter', sans-serif;
+            background: var(--bg); font-family: 'Inter', sans-serif; 
             color: #fff; overflow: hidden;
             display: grid;
-            grid-template-rows: 85px auto auto 1fr 30px; /* Чіткий розподіл місця */
+            grid-template-rows: 85px auto auto 1fr 30px; 
         }
 
-        .header {
+        /* ШАПКА ТЕПЕР ЯК НА ПЕРШОМУ СКРІНІ */
+        .header { 
             background: var(--card); border-bottom: 2px solid var(--accent);
             display: flex; align-items: center; padding: 0 20px; z-index: 10;
         }
 
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; }
+        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; line-height: 1.2; }
         
-        .status { margin-left: 20px; padding-left: 15px; border-left: 1px solid #333; }
-        #kyiv-time { font-size: 22px; font-weight: bold; font-family: monospace; }
+        .status-box {
+            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
+            display: flex; flex-direction: column; justify-content: center;
+        }
 
-        .nav { display: flex; gap: 8px; padding: 10px; background: #000; overflow-x: auto; scrollbar-width: none; }
+        /* НОРМАЛЬНИЙ ВЕЛИКИЙ ГОДИННИК */
+        #kyiv-time { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-size: 26px; 
+            font-weight: 800; 
+            line-height: 1; 
+            letter-spacing: 1px;
+        }
+        
+        .sys-info { font-size: 10px; color: var(--danger); font-weight: 900; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        .dot { width: 6px; height: 6px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 5px var(--danger); }
+
+        /* КНОПКИ В ОДИН РЯД */
+        .header-btns { margin-left: auto; display: flex; gap: 10px; }
+        
+        .btn-top {
+            padding: 10px 15px; border-radius: 6px; text-decoration: none; 
+            font-weight: 900; font-size: 11px; text-transform: uppercase;
+            color: #fff; transition: 0.2s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-tg { background: #0088cc; }
+        .btn-sup { background: var(--support-green); color: #000; }
+        .btn-don { background: var(--gold); color: #000; }
+        .btn-top:hover { filter: brightness(1.2); transform: translateY(-1px); }
+
+        /* НАВІГАЦІЯ (ПІДНЯТА) */
+        .nav { display: flex; gap: 8px; padding: 10px; background: rgba(0,0,0,0.5); overflow-x: auto; scrollbar-width: none; }
         .nav-btn {
             background: #21262d; border: 1px solid #30363d; color: #fff;
-            padding: 10px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;
+            padding: 10px 18px; border-radius: 8px; cursor: pointer; font-weight: 800; font-size: 13px;
+            white-space: nowrap; display: flex; align-items: center; gap: 8px;
         }
-        .nav-btn.active { background: var(--accent); color: #000; }
+        .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
 
-        .marquee { background: #000; color: var(--accent); font-size: 11px; padding: 5px; white-space: nowrap; border-bottom: 1px solid #222; overflow: hidden; }
-        .marquee-text { display: inline-block; animation: scroll 20s linear infinite; }
-        @keyframes scroll { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+        .marquee { background: #000; color: var(--accent); font-size: 11px; padding: 6px; font-weight: bold; overflow: hidden; border-bottom: 1px solid #222; }
+        .marquee-text { display: inline-block; animation: scroll 25s linear infinite; }
+        @keyframes scroll { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
 
-        /* Контент займає все вільне місце */
-        .viewport { position: relative; width: 100%; height: 100%; }
+        .viewport { position: relative; background: #000; }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
 
@@ -59,48 +89,23 @@
 
     <header class="header">
         <div class="brand">Sky Monitor<br>OSINT HUB</div>
-        <div class="status">
+        
+        <div class="status-box">
             <div id="kyiv-time">00:00:00</div>
-            <div style="font-size: 9px; color: var(--danger);">● СИСТЕМА АКТИВНА</div>
+            <div class="sys-info"><div class="dot"></div> СИСТЕМА АКТИВНА</div>
         </div>
-        <div style="margin-left: auto;">
-            <a href="https://t.me/manitoringkiev" target="_blank" style="background: #0088cc; color: #fff; text-decoration: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; font-size: 12px;">TG КАНАЛ</a>
+
+        <div class="header-btns">
+            <a href="https://t.me/manitoringkiev" target="_blank" class="btn-top btn-tg">КАНАЛ</a>
+            <a href="https://t.me/monitorkiev_bot" target="_blank" class="btn-top btn-sup">SUPPORT</a>
+            <a href="https://send.monobank.ua/" target="_blank" class="btn-top btn-don">ДОНАТ ₴</a>
         </div>
     </header>
 
-    <div class="marquee"><div class="marquee-text">СЛАВА УКРАЇНІ! 🇺🇦 МОНІТОРИНГ ПРАЦЮЄ... ПІДТРИМУЙТЕ ЗСУ...</div></div>
+    <div class="marquee">
+        <div class="marquee-text">СЛАВА УКРАЇНІ! 🇺🇦 МОНІТОРИНГ ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДТРИМУЙТЕ ЗСУ... ПІДПИСУЙТЕСЬ НА @MANITORINGKIEV...</div>
+    </div>
 
     <nav class="nav">
         <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
-        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
-        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
-        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
-    </nav>
-
-    <main class="viewport">
-        <iframe id="m1" class="active" src="https://alerts.in.ua/"></iframe>
-        <iframe id="m2" src="https://deepstatemap.live/"></iframe>
-        <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
-        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/"></iframe>
-    </main>
-
-    <footer class="footer">
-        © 2026 Всі права захищені | Автор: <b>Burasik (En0T1k_UA)</b>
-    </footer>
-
-    <script>
-        function tab(id, btn) {
-            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            btn.classList.add('active');
-        }
-        function updateTime() {
-            document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
-                timeZone: 'Europe/Kyiv', hour12: false 
-            });
-        }
-        setInterval(updateTime, 1000); updateTime();
-    </script>
-</body>
-</html>
+        <button class="nav-btn" onclick="tab
