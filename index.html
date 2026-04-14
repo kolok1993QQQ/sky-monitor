@@ -163,4 +163,39 @@
                 <i class="fa-solid fa-signal"></i>
             </div>
             <div class="nav-link" onclick="tab('m5', this)" title="Meteo">
-                <i class="fa-solid
+                <i class="fa-solid fa-cloud-moon-bolt"></i>
+            </div>
+        </aside>
+
+        <main class="viewport">
+            <div class="monitor-frame">
+                <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
+                <iframe id="m2" src="https://deepstatemap.live/"></iframe>
+                <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
+                <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/?tune=8847usb"></iframe>
+                <iframe id="m5" src="https://www.windy.com/"></iframe>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    function tab(id, btn) {
+        document.querySelectorAll('iframe, .nav-link').forEach(el => el.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('clock').innerText = now.toLocaleTimeString('uk-UA', { 
+            timeZone: 'Europe/Kyiv', 
+            hour12: false 
+        });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+</body>
+</html>
