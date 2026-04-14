@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Sky Monitor | COMMAND CENTER</title>
+    
+    <title>Sky Monitor | МОНІТОР НЕБА — Карта тривог та авіації</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=JetBrains+Mono:wght@500;800&display=swap" rel="stylesheet">
@@ -11,124 +12,160 @@
     <style>
         :root { 
             --accent: #00f2ff; 
-            --bg: #05070a; 
-            --panel: rgba(13, 17, 23, 0.9); 
-            --border: rgba(0, 242, 255, 0.2);
+            --bg: #0d1117; 
+            --card: rgba(22, 27, 34, 0.95); 
+            --gold: #ffd700; 
+            --tg-blue: #0088cc;
+            --support-green: #39d353;
             --danger: #ff003c;
             --sidebar-w: 80px;
         }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'JetBrains Mono', monospace; color: #fff; overflow: hidden; }
-
-        /* ФОНОВА СІТКА */
-        body::before {
-            content: ""; position: absolute; inset: 0;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 40px 40px; opacity: 0.1; z-index: 0; pointer-events: none;
-        }
-
-        .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1; }
+        .wrapper { display: flex; flex-direction: column; height: 100vh; }
 
         /* ШАПКА */
-        header { 
-            height: 75px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--panel); backdrop-filter: blur(15px); 
+        .header { 
+            height: 85px; display: flex; align-items: center; padding: 0 20px; 
+            background: var(--card); backdrop-filter: blur(15px); 
             border-bottom: 2px solid var(--accent); z-index: 100;
         }
         
-        .brand { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; color: var(--accent); }
-
-        .clock-box { margin-left: 20px; padding-left: 15px; border-left: 1px solid var(--border); }
-        #clock { font-size: 20px; font-weight: 800; }
+        .brand { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        
+        .status-container {
+            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        #kyiv-time { font-size: 22px; font-weight: 800; color: #fff; line-height: 1; }
+        .sys-status { font-size: 10px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 6px; }
+        
+        .blink-dot { 
+            width: 8px; height: 8px; background: var(--danger); 
+            border-radius: 50%; animation: pulse-red 1s infinite;
+            box-shadow: 0 0 8px var(--danger);
+        }
+        @keyframes pulse-red { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
 
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
-        .btn { padding: 10px 15px; border-radius: 8px; text-decoration: none; font-weight: 800; font-size: 11px; text-transform: uppercase; transition: 0.3s; }
-        .btn-tg { border: 1px solid #0088cc; color: #fff; background: rgba(0, 136, 204, 0.1); }
-        .btn-tg:hover { background: #0088cc; box-shadow: 0 0 15px #0088cc; }
-
-        /* КОНТЕНТ */
-        .main-stage { display: flex; flex-grow: 1; overflow: hidden; }
-
-        aside {
-            width: var(--sidebar-w); background: var(--panel); border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; align-items: center; padding: 25px 0; gap: 20px;
+        .neon-btn {
+            padding: 10px 14px; border-radius: 8px; text-decoration: none; 
+            font-weight: 900; font-size: 11px; transition: 0.3s;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
         }
+        .btn-tg { background: var(--tg-blue); }
+        .btn-donate { background: var(--gold); color: #000; }
 
-        .nav-icon {
-            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
-            font-size: 20px; color: rgba(255,255,255,0.4); cursor: pointer; transition: 0.3s; border-radius: 12px;
+        /* НАВІГАЦІЯ */
+        .nav-container { padding: 12px; display: flex; gap: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid #30363d; }
+        .nav-btn {
+            background: #1c2128; border: 1px solid #30363d; color: #8b949e;
+            padding: 12px 20px; border-radius: 10px; cursor: pointer; 
+            font-weight: 800; font-size: 13px; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px;
         }
-        .nav-icon.active { color: var(--accent); background: rgba(0, 242, 255, 0.1); border: 1px solid var(--accent); }
+        .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
 
-        .viewport { flex-grow: 1; padding: 15px; position: relative; }
+        /* В'ЮПОРТ ТА ОВЕРЛЕЙ */
+        .viewport { flex-grow: 1; position: relative; overflow: hidden; background: #000; }
         
-        /* ЛЕГЕНДА (ТВОЯ КАРТИНКА) */
-        .left-overlay { position: absolute; top: 25px; left: 25px; z-index: 10; pointer-events: none; }
-        .overlay-card { 
-            background: rgba(13, 17, 23, 0.9); border: 1px solid var(--border); 
-            border-radius: 12px; padding: 12px; width: 180px; pointer-events: auto;
-            margin-bottom: 10px;
+        /* ЛЕГЕНДА ТА GPS (ЗІ СКРІНШОТІВ) */
+        .map-overlay {
+            position: absolute; top: 20px; left: 20px;
+            display: flex; flex-direction: column; gap: 12px;
+            z-index: 10; pointer-events: none;
         }
-        .legend-item { display: flex; align-items: center; gap: 10px; font-size: 10px; margin-bottom: 5px; }
+        .overlay-card {
+            background: rgba(13, 17, 23, 0.9); border: 1px solid var(--accent);
+            border-radius: 12px; padding: 15px; width: 220px;
+            backdrop-filter: blur(10px); pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .legend-title { font-size: 10px; color: #8b949e; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
+        .legend-item { display: flex; align-items: center; gap: 12px; font-size: 11px; margin-bottom: 8px; font-weight: 600; }
+        
+        /* КНОПКА GPS РАДАРУ */
+        .radar-btn {
+            width: 100%; background: #00c853; color: #fff; border: none;
+            padding: 14px; border-radius: 8px; font-weight: 900; cursor: pointer;
+            text-transform: uppercase; font-size: 12px; transition: 0.3s;
+            box-shadow: 0 0 20px rgba(0, 200, 83, 0.4);
+        }
+        .radar-btn:hover { filter: brightness(1.2); transform: scale(1.02); }
 
-        .screen { width: 100%; height: 100%; border-radius: 15px; overflow: hidden; border: 1px solid var(--border); background: #000; }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
 
         @media (max-width: 768px) {
-            aside { position: absolute; left: -100%; transition: 0.3s; }
-            aside.open { left: 0; }
-            .left-overlay { scale: 0.8; top: 10px; left: 10px; }
+            .header { height: 70px; padding: 0 10px; }
+            .btn-group span { display: none; }
+            .map-overlay { scale: 0.85; top: 10px; left: 10px; }
         }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
-    <header>
-        <div class="brand">EN0T1K_UA MONITOR</div>
-        <div class="clock-box"><div id="clock">00:00:00</div></div>
+    <header class="header">
+        <div class="brand">EN0T1K_UA<br>MONITOR</div>
+        <div class="status-container">
+            <div id="kyiv-time">00:00:00</div>
+            <div class="sys-status"><div class="blink-dot"></div> СИСТЕМА АКТИВНА</div>
+        </div>
         <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" class="btn btn-tg">Telegram</a>
+            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
+            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn btn-donate">ДОНАТ ₴</a>
         </div>
     </header>
 
-    <div class="main-stage">
-        <aside id="sidebar">
-            <div class="nav-icon active" onclick="tab('m1', this)"><i class="fa-solid fa-radiation"></i></div>
-            <div class="nav-icon" onclick="tab('m2', this)"><i class="fa-solid fa-map"></i></div>
-            <div class="nav-icon" onclick="tab('m3', this)"><i class="fa-solid fa-plane"></i></div>
-        </aside>
+    <nav class="nav-container">
+        <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
+        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
+        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
+        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
+        <button class="nav-btn" onclick="tab('m5', this)">⛈️ ПОГОДА</button>
+    </nav>
 
-        <main class="viewport">
-            <div class="left-overlay">
-                <div class="overlay-card">
-                    <div class="legend-item"><i class="fa-solid fa-bolt" style="color: #4caf50;"></i> Ракети</div>
-                    <div class="legend-item"><i class="fa-solid fa-ghost" style="color: #ff5252;"></i> БпЛА</div>
-                </div>
-                <div class="overlay-card" style="background: #00c853; text-align: center; cursor: pointer;">
-                    <span style="font-size: 10px; font-weight: 900;">GPS РАДАР</span>
-                </div>
+    <main class="viewport">
+        <div class="map-overlay">
+            <div class="overlay-card">
+                <div class="legend-title">ТИПИ ЦІЛЕЙ</div>
+                <div class="legend-item"><i class="fa-solid fa-bolt" style="color: #4caf50;"></i> Крилаті ракети</div>
+                <div class="legend-item"><i class="fa-solid fa-fire" style="color: #ffeb3b;"></i> Аеробалістика</div>
+                <div class="legend-item"><i class="fa-solid fa-ghost" style="color: #ff9800;"></i> БпЛА Герань/Гербера</div>
+                <div class="legend-item"><i class="fa-solid fa-play" style="color: #00e5ff; transform: rotate(-90deg);"></i> Реактивні БпЛА</div>
+                <div class="legend-item"><i class="fa-solid fa-angles-right" style="color: #ff5252;"></i> Ракети X-101 / X-59</div>
+                <div class="legend-item"><i class="fa-solid fa-certificate" style="color: #2196f3;"></i> Калібр / Іскандер-К</div>
             </div>
 
-            <div class="screen">
-                <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark" allow="geolocation"></iframe>
-                <iframe id="m2" src="https://deepstatemap.live/" allow="geolocation"></iframe>
-                <iframe id="m3" src="https://globe.adsbexchange.com/" allow="geolocation"></iframe>
+            <div class="overlay-card" style="text-align: center;">
+                <div class="legend-title">РЕЖИМ РАДАРУ</div>
+                <button class="radar-btn" onclick="getLocation()">ВИКОРИСТАТИ GPS</button>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark" allow="geolocation"></iframe>
+        <iframe id="m2" src="https://deepstatemap.live/" allow="geolocation"></iframe>
+        <iframe id="m3" src="https://globe.adsbexchange.com/" allow="geolocation"></iframe>
+        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/?tune=8847usb"></iframe>
+        <iframe id="m5" src="https://www.windy.com/"></iframe>
+    </main>
 </div>
 
 <script>
     function tab(id, btn) {
-        document.querySelectorAll('iframe, .nav-icon').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('iframe, .nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
     }
     function updateClock() {
-        document.getElementById('clock').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false });
+        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
+            timeZone: 'Europe/Kyiv', 
+            hour12: false 
+        });
+    }
+    function getLocation() {
+        alert("Запит на GPS... Дозвольте доступ у браузері.");
     }
     setInterval(updateClock, 1000); updateClock();
 </script>
