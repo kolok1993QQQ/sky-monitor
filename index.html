@@ -108,4 +108,37 @@
 
     <nav class="nav">
         <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
-        <button class="nav-btn" onclick="tab
+        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
+        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
+        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
+        <button class="nav-btn" onclick="tab('m5', this)">⛈️ ПОГОДА</button>
+    </nav>
+
+    <main class="viewport">
+        <iframe id="m1" class="active" src="https://alerts.in.ua/"></iframe>
+        <iframe id="m2" src="https://deepstatemap.live/"></iframe>
+        <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
+        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/"></iframe>
+        <iframe id="m5" src="https://www.windy.com/"></iframe>
+    </main>
+
+    <footer class="footer">
+        © 2026 | Автор: <b>Burasik (En0T1k_UA)</b> | Sky Monitor
+    </footer>
+
+    <script>
+        function tab(id, btn) {
+            document.querySelectorAll('iframe').forEach(f => f.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+        function updateTime() {
+            document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
+                timeZone: 'Europe/Kyiv', hour12: false 
+            });
+        }
+        setInterval(updateTime, 1000); updateTime();
+    </script>
+</body>
+</html>
