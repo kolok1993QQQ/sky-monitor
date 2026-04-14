@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <title>Sky Monitor | МОНІТОР НЕБА — Карта тривог та авіації</title>
-    <meta name="description" content="Оперативний моніторинг неба, повітряних тривог та авіації у реальному часі. Професійний OSINT-центр.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    
     <style>
         :root { 
             --accent: #00f2ff; 
@@ -50,9 +49,9 @@
             border-radius: 50%; animation: pulse-red 1s infinite;
         }
         @keyframes pulse-red {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
         /* БІЖУЧИЙ РЯДОК */
@@ -68,21 +67,20 @@
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
         .neon-btn {
             padding: 10px 14px; border-radius: 8px; text-decoration: none; 
-            font-weight: 900; font-size: 11px; transition: 0.3s;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 900; font-size: 11px; text-transform: uppercase;
         }
         .btn-tg { background: var(--tg-blue); }
         .btn-support { background: var(--support-green); color: #000; }
         .btn-donate { background: var(--gold); color: #000; }
 
-        /* ВЕРХНЯ НАВІГАЦІЯ (ХОВАЄМО НА МОБІЛКАХ) */
+        /* ВЕРХНЯ НАВІГАЦІЯ (ДЛЯ ПК) */
         .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; background: rgba(0,0,0,0.4); }
         .nav-btn {
             background: #1c2128; border: 1px solid #30363d; color: #8b949e;
             padding: 12px 20px; border-radius: 10px; cursor: pointer; 
             font-weight: 800; font-size: 13px; flex-shrink: 0;
         }
-        .nav-btn.active { background: var(--accent); color: #000; border-color: #fff; }
+        .nav-btn.active { background: var(--accent); color: #000; }
 
         /* В'ЮПОРТ */
         .viewport { flex-grow: 1; margin: 0 10px 10px 10px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d; position: relative; }
@@ -91,7 +89,7 @@
 
         /* НИЖНЯ ПАНЕЛЬ ДЛЯ МОБІЛОК */
         .mobile-bottom-nav {
-            display: none; /* За замовчуванням сховано */
+            display: none; /* Сховано на ПК */
             position: fixed;
             bottom: 0;
             left: 0;
@@ -111,33 +109,36 @@
             align-items: center;
             color: #8b949e;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 22px;
             width: 20%;
             height: 100%;
             justify-content: center;
-            transition: 0.2s;
-            cursor: pointer;
-            border: none;
             background: none;
+            border: none;
+            cursor: pointer;
         }
 
         .m-nav-item.active {
             color: #fff;
-            background: rgba(139, 0, 0, 0.2); /* Темно-червоний фон як на скріншоті */
-        }
-        
-        .m-nav-item.active i {
-            color: #fff;
+            background: rgba(139, 0, 0, 0.4); /* Темний червоний фон */
         }
 
-        /* АДАПТИВНІСТЬ */
+        /* АДАПТИВНІСТЬ ДЛЯ МОБІЛОК */
         @media (max-width: 768px) {
             .nav-container { display: none; } /* Ховаємо верхні кнопки */
             .header { height: 70px; padding: 0 10px; }
-            .brand { display: none; }
+            .brand { display: none; } /* Ховаємо текст зліва для місця */
             .status-container { margin-left: 0; padding-left: 0; border: none; }
-            .mobile-bottom-nav { display: flex; } /* Показуємо панель */
-            .viewport { margin: 0 0 70px 0; border-radius: 0; border-left: none; border-right: none; }
+            
+            .mobile-bottom-nav { display: flex; } /* Показуємо нижню панель */
+            .viewport { 
+                margin: 0 0 70px 0; /* Відступ під панель */
+                border-radius: 0; 
+                border-left: none; 
+                border-right: none; 
+            }
+            .btn-group { gap: 5px; }
+            .neon-btn { padding: 8px 10px; font-size: 10px; }
         }
     </style>
 </head>
@@ -150,19 +151,19 @@
         <div class="status-container">
             <div id="kyiv-time">00:00:00</div>
             <div class="sys-status">
-                <div class="blink-dot"></div> СИСТЕМА АКТИВНА
+                <div class="blink-dot"></div> ACTIVE
             </div>
         </div>
 
         <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
+            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">TG</a>
             <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn btn-donate">₴</a>
         </div>
     </header>
 
     <div class="marquee-container">
         <div class="marquee-text">
-            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV...
+            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... @MANITORINGKIEV...
         </div>
     </div>
 
@@ -195,7 +196,7 @@
         <button class="m-nav-item" onclick="tab('m5', this)">
             <i class="fa-solid fa-circle-question"></i>
         </button>
-        <button class="m-nav-item" onclick="openSettings()">
+        <button class="m-nav-item" onclick="alert('Налаштування')">
             <i class="fa-solid fa-gear"></i>
         </button>
     </nav>
@@ -203,18 +204,15 @@
 
 <script>
     function tab(id, btn) {
-        // Очищуємо активний стан для всіх кнопок (і верхніх, і нижніх)
+        // Очищуємо активний клас у всіх кнопок (і верхніх, і нижніх)
         document.querySelectorAll('iframe, .nav-btn, .m-nav-item').forEach(el => el.classList.remove('active'));
         
-        // Активуємо потрібний фрейм
-        document.getElementById(id).classList.add('active');
+        // Включаємо потрібне вікно
+        const target = document.getElementById(id);
+        if(target) target.classList.add('active');
         
-        // Якщо натиснуто на нижню панель, додаємо активність їй
+        // Робимо кнопку активною
         btn.classList.add('active');
-    }
-
-    function openSettings() {
-        alert("Налаштування в розробці");
     }
 
     function updateClock() {
