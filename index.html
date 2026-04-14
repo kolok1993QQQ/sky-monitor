@@ -107,4 +107,71 @@
             <path id="UA-09" d="M950 390 L 970 400 L 990 390 L 1000 410 L 990 430 L 970 440 L 950 430 L 940 420 Z"></path>
             <path id="UA-63" d="M910 370 L 930 380 L 950 370 L 960 390 L 950 410 L 930 420 L 910 410 L 900 400 Z"></path>
             <path id="UA-12" d="M850 430 L 870 440 L 890 430 L 900 450 L 890 470 L 870 480 L 850 470 L 840 460 Z"></path>
-            <path id="UA-53" d="M830 350 L 850 360 L 8
+            <path id="UA-53" d="M830 350 L 850 360 L 870 350 L 880 370 L 870 390 L 850 400 L 830 390 L 820 380 Z"></path>
+            <path id="UA-59" d="M870 280 L 890 290 L 910 280 L 920 300 L 910 320 L 890 330 L 870 320 L 860 310 Z"></path>
+            <path id="UA-74" d="M800 230 L 820 240 L 840 230 L 850 250 L 840 270 L 820 280 L 800 270 L 790 260 Z"></path>
+            <path id="UA-32" d="M780 290 L 800 300 L 820 290 L 830 310 L 820 330 L 800 340 L 780 330 L 770 320 Z"></path>
+            <path id="UA-71" d="M780 370 L 800 380 L 820 370 L 830 390 L 820 410 L 800 420 L 780 410 L 770 400 Z"></path>
+            <path id="UA-35" d="M780 440 L 800 450 L 820 440 L 830 460 L 820 480 L 800 490 L 780 480 L 770 470 Z"></path>
+            <path id="UA-05" d="M700 390 L 720 400 L 740 390 L 750 410 L 740 430 L 720 440 L 700 430 L 690 420 Z"></path>
+            <path id="UA-18" d="M700 290 L 720 300 L 740 290 L 750 310 L 740 330 L 720 340 L 700 330 L 690 320 Z"></path>
+            <path id="UA-68" d="M640 360 L 660 370 L 680 360 L 690 380 L 680 400 L 660 410 L 640 400 L 630 390 Z"></path>
+            <path id="UA-56" d="M640 260 L 660 270 L 680 260 L 690 280 L 680 300 L 660 310 L 640 300 L 630 290 Z"></path>
+            <path id="UA-07" d="M570 260 L 590 270 L 610 260 L 620 280 L 610 300 L 590 310 L 570 300 L 560 290 Z"></path>
+            <path id="UA-46" d="M540 340 L 560 350 L 580 340 L 590 360 L 580 380 L 560 390 L 540 380 L 530 370 Z"></path>
+            <path id="UA-61" d="M600 370 L 620 380 L 640 370 L 650 390 L 640 410 L 620 420 L 600 410 L 590 400 Z"></path>
+            <path id="UA-26" d="M580 430 L 600 440 L 620 430 L 630 450 L 620 470 L 600 480 L 580 470 L 570 460 Z"></path>
+            <path id="UA-21" d="M500 430 L 520 440 L 540 430 L 550 450 L 540 470 L 520 480 L 500 470 L 490 460 Z"></path>
+            <path id="UA-77" d="M640 460 L 660 470 L 680 460 L 690 480 L 680 500 L 660 510 L 640 500 L 630 490 Z"></path>
+        </svg>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="color-box" style="background: var(--alarm)"></div>Повітряна тривога</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--safe)"></div>Немає тривоги</div>
+    </div>
+
+    <script>
+        const map = document.getElementById('ukraine-map');
+        const updateText = document.getElementById('last-update');
+        const statusText = document.getElementById('status-text');
+
+        // Функція для отримання та оновлення даних
+        async function fetchAlarms() {
+            try {
+                // Безкоштовне джерело даних про тривоги
+                const response = await fetch('https://test-alerts-api.wialon.com/test-alerts.json');
+                if (!response.ok) throw new Error("Помилка мережі");
+                const data = await response.json();
+
+                // 1. Спочатку скидаємо всі тривоги
+                const allRegions = map.querySelectorAll('path');
+                allRegions.forEach(region => region.classList.remove('is-alarm'));
+
+                // 2. Якщо є активні тривоги — замальовуємо їх
+                if (data.activeAlerts && data.activeAlerts.length > 0) {
+                    data.activeAlerts.forEach(alertRegionCode => {
+                        const regionPath = map.getElementById(alertRegionCode);
+                        if (regionPath) {
+                            regionPath.classList.add('is-alarm');
+                        }
+                    });
+                }
+
+                updateText.innerText = "Останнє оновлення: " + new Date().toLocaleTimeString();
+                statusText.innerText = "✅ Оновлено";
+                statusText.style.color = "#00ff88";
+
+            } catch (error) {
+                console.error("Помилка оновлення:", error);
+                statusText.innerText = "❌ Помилка синхронізації";
+                statusText.style.color = "#e63946";
+            }
+        }
+
+        // Авто-оновлення кожні 20 секунд
+        setInterval(fetchAlarms, 20000);
+        fetchAlarms(); // Перший запуск
+    </script>
+</body>
+</html>
