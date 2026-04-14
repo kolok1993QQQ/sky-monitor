@@ -16,9 +16,7 @@
             --card: rgba(22, 27, 34, 0.95); 
             --gold: #ffd700; 
             --tg-blue: #0088cc;
-            --support-green: #39d353;
             --danger: #ff003c;
-            --sidebar-w: 80px;
         }
         
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'JetBrains Mono', monospace; color: #fff; overflow: hidden; }
@@ -43,7 +41,6 @@
         .blink-dot { 
             width: 8px; height: 8px; background: var(--danger); 
             border-radius: 50%; animation: pulse-red 1s infinite;
-            box-shadow: 0 0 8px var(--danger);
         }
         @keyframes pulse-red { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
 
@@ -53,122 +50,25 @@
             font-weight: 900; font-size: 11px; transition: 0.3s;
             text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-tg { background: var(--tg-blue); }
+        .btn-tg { background: var(--tg-blue); color: #fff; }
         .btn-donate { background: var(--gold); color: #000; }
 
         /* НАВІГАЦІЯ */
-        .nav-container { padding: 12px; display: flex; gap: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid #30363d; }
+        .nav-container { padding: 12px; display: flex; gap: 10px; background: rgba(0,0,0,0.4); border-bottom: 1px solid #30363d; overflow-x: auto; }
         .nav-btn {
             background: #1c2128; border: 1px solid #30363d; color: #8b949e;
             padding: 12px 20px; border-radius: 10px; cursor: pointer; 
             font-weight: 800; font-size: 13px; transition: 0.2s;
-            display: flex; align-items: center; gap: 8px;
+            white-space: nowrap;
         }
         .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
 
-        /* В'ЮПОРТ ТА ОВЕРЛЕЙ */
+        /* В'ЮПОРТ - ТЕПЕР ПОВНІСТЮ ЧИСТИЙ */
         .viewport { flex-grow: 1; position: relative; overflow: hidden; background: #000; }
         
-        /* ЛЕГЕНДА ТА GPS (ЗІ СКРІНШОТІВ) */
-        .map-overlay {
-            position: absolute; top: 20px; left: 20px;
-            display: flex; flex-direction: column; gap: 12px;
-            z-index: 10; pointer-events: none;
-        }
-        .overlay-card {
-            background: rgba(13, 17, 23, 0.9); border: 1px solid var(--accent);
-            border-radius: 12px; padding: 15px; width: 220px;
-            backdrop-filter: blur(10px); pointer-events: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .legend-title { font-size: 10px; color: #8b949e; margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
-        .legend-item { display: flex; align-items: center; gap: 12px; font-size: 11px; margin-bottom: 8px; font-weight: 600; }
-        
-        /* КНОПКА GPS РАДАРУ */
-        .radar-btn {
-            width: 100%; background: #00c853; color: #fff; border: none;
-            padding: 14px; border-radius: 8px; font-weight: 900; cursor: pointer;
-            text-transform: uppercase; font-size: 12px; transition: 0.3s;
-            box-shadow: 0 0 20px rgba(0, 200, 83, 0.4);
-        }
-        .radar-btn:hover { filter: brightness(1.2); transform: scale(1.02); }
-
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
 
         @media (max-width: 768px) {
             .header { height: 70px; padding: 0 10px; }
-            .btn-group span { display: none; }
-            .map-overlay { scale: 0.85; top: 10px; left: 10px; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="wrapper">
-    <header class="header">
-        <div class="brand">EN0T1K_UA<br>MONITOR</div>
-        <div class="status-container">
-            <div id="kyiv-time">00:00:00</div>
-            <div class="sys-status"><div class="blink-dot"></div> СИСТЕМА АКТИВНА</div>
-        </div>
-        <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
-            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn btn-donate">ДОНАТ ₴</a>
-        </div>
-    </header>
-
-    <nav class="nav-container">
-        <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
-        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
-        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
-        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
-        <button class="nav-btn" onclick="tab('m5', this)">⛈️ ПОГОДА</button>
-    </nav>
-
-    <main class="viewport">
-        <div class="map-overlay">
-            <div class="overlay-card">
-                <div class="legend-title">ТИПИ ЦІЛЕЙ</div>
-                <div class="legend-item"><i class="fa-solid fa-bolt" style="color: #4caf50;"></i> Крилаті ракети</div>
-                <div class="legend-item"><i class="fa-solid fa-fire" style="color: #ffeb3b;"></i> Аеробалістика</div>
-                <div class="legend-item"><i class="fa-solid fa-ghost" style="color: #ff9800;"></i> БпЛА Герань/Гербера</div>
-                <div class="legend-item"><i class="fa-solid fa-play" style="color: #00e5ff; transform: rotate(-90deg);"></i> Реактивні БпЛА</div>
-                <div class="legend-item"><i class="fa-solid fa-angles-right" style="color: #ff5252;"></i> Ракети X-101 / X-59</div>
-                <div class="legend-item"><i class="fa-solid fa-certificate" style="color: #2196f3;"></i> Калібр / Іскандер-К</div>
-            </div>
-
-            <div class="overlay-card" style="text-align: center;">
-                <div class="legend-title">РЕЖИМ РАДАРУ</div>
-                <button class="radar-btn" onclick="getLocation()">ВИКОРИСТАТИ GPS</button>
-            </div>
-        </div>
-
-        <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark" allow="geolocation"></iframe>
-        <iframe id="m2" src="https://deepstatemap.live/" allow="geolocation"></iframe>
-        <iframe id="m3" src="https://globe.adsbexchange.com/" allow="geolocation"></iframe>
-        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/?tune=8847usb"></iframe>
-        <iframe id="m5" src="https://www.windy.com/"></iframe>
-    </main>
-</div>
-
-<script>
-    function tab(id, btn) {
-        document.querySelectorAll('iframe, .nav-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-    }
-    function updateClock() {
-        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
-            timeZone: 'Europe/Kyiv', 
-            hour12: false 
-        });
-    }
-    function getLocation() {
-        alert("Запит на GPS... Дозвольте доступ у браузері.");
-    }
-    setInterval(updateClock, 1000); updateClock();
-</script>
-
-</body>
-</html>
+            .btn-group span { display: none;
