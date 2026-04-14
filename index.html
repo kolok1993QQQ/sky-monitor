@@ -3,65 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Sky Monitor | OSINT EDITION</title>
     
-    <title>Sky Monitor | МОНІТОР НЕБА</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         :root { 
             --accent: #00f2ff; 
-            --bg: #0d1117; 
-            --card: rgba(22, 27, 34, 0.95); 
-            --gold: #ffd700; 
-            --tg-blue: #0088cc;
+            --bg: #05070a; 
+            --panel: rgba(20, 25, 35, 0.8); 
+            --border: rgba(0, 242, 255, 0.2);
             --danger: #ff003c;
-            --sidebar-w: 80px; /* Ширина бічної панелі для іконок */
+            --sidebar-w: 70px;
         }
         
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
-        
-        .wrapper { display: flex; flex-direction: column; height: 100vh; }
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; 
+            background: var(--bg); 
+            font-family: 'Inter', sans-serif; 
+            color: #fff; overflow: hidden;
+        }
 
-        /* ШАПКА */
+        /* ЕФЕКТ СІТКИ НА ФОНІ */
+        body::before {
+            content: ""; position: absolute; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px; pointer-events: none; opacity: 0.1; z-index: 1;
+        }
+
+        .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 2; }
+
+        /* ВЕРХНЯ ПАНЕЛЬ - МОДУЛЬНИЙ ТИП */
         .header { 
-            height: 70px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--card); backdrop-filter: blur(15px); 
-            border-bottom: 2px solid var(--accent); z-index: 10;
-            flex-shrink: 0;
+            height: 65px; display: flex; align-items: center; padding: 0 15px; 
+            background: var(--panel); backdrop-filter: blur(10px); 
+            border-bottom: 1px solid var(--border); flex-shrink: 0;
         }
         
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        
-        .status-container {
-            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
+        .brand-module {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px; font-weight: 700; color: var(--accent);
+            letter-spacing: 2px; border: 1px solid var(--accent);
+            padding: 5px 12px; border-radius: 4px; background: rgba(0, 242, 255, 0.05);
+        }
+
+        .clock-module {
+            margin-left: 20px; font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.3); padding: 5px 15px;
+            border-radius: 4px; border-left: 3px solid var(--accent);
+        }
+        #kyiv-time { font-size: 18px; color: #fff; }
+
+        .btn-group { margin-left: auto; display: flex; gap: 10px; }
+        .mod-btn {
+            padding: 8px 15px; border-radius: 4px; text-decoration: none; 
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            transition: 0.3s; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-tg { color: var(--accent); border-color: var(--accent); }
+        .btn-tg:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); }
+
+        /* ОСНОВНИЙ КОНТЕЙНЕР */
+        .main-container { display: flex; flex-grow: 1; overflow: hidden; }
+
+        /* БІЧНА ПАНЕЛЬ НАВІГАЦІЇ */
+        .sidebar {
+            width: var(--sidebar-w); background: var(--panel);
+            border-right: 1px solid var(--border); display: flex;
+            flex-direction: column; align-items: center; padding: 20px 0; gap: 20px;
+        }
+
+        .nav-item {
+            width: 45px; height: 45px; display: flex; align-items: center;
+            justify-content: center; font-size: 18px; color: rgba(255,255,255,0.5);
+            cursor: pointer; transition: 0.3s; border-radius: 8px;
+            position: relative;
+        }
+        .nav-item:hover { color: var(--accent); background: rgba(0, 242, 255, 0.1); }
+        .nav-item.active { 
+            color: var(--accent); background: rgba(0, 242, 255, 0.15);
+            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2);
+            border: 1px solid var(--border);
+        }
+        .nav-item.active::before {
+            content: ""; position: absolute; left: -15px; width: 4px; height: 20px;
+            background: var(--accent); border-radius: 0 4px 4px 0; box-shadow: 0 0 10px var(--accent);
+        }
+
+        /* РОБОЧА ЗОНА */
+        .viewport { 
+            flex-grow: 1; padding: 10px; background: rgba(0,0,0,0.2);
             display: flex; flex-direction: column;
         }
-        #kyiv-time { font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 800; }
-
-        /* ОСНОВНИЙ КОНТЕЙНЕР З БІЧНОЮ ПАНЕЛЛЮ */
-        .main-container {
-            display: flex;
-            flex-grow: 1;
-            overflow: hidden;
+        .screen-frame {
+            flex-grow: 1; border: 1px solid var(--border); border-radius: 8px;
+            overflow: hidden; background: #000; position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
         }
+        
+        iframe { width: 100%; height: 100%; border: none; display: none; }
+        iframe.active { display: block; }
 
-        /* ЛІВА БІЧНА ПАНЕЛЬ */
-        .sidebar {
-            width: var(--sidebar-w);
-            background: rgba(0,0,0,0.4);
-            border-right: 1px solid #30363d;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-            gap: 15px;
-            flex-shrink: 0;
+        /* АДАПТИВНІСТЬ ДЛЯ МОБІЛОК */
+        @media (max-width: 768px) {
+            .main-container { flex-direction: column; }
+            .sidebar {
+                width: 100%; height: 65px; flex-direction: row;
+                order: 2; border-right: none; border-top: 1px solid var(--border);
+                justify-content: space-around; padding: 0 10px;
+            }
+            .nav-item.active::before { display: none; }
+            .nav-item.active { border-bottom: 2px solid var(--accent); border-radius: 0; }
+            .viewport { padding: 5px; margin-bottom: 65px; }
+            .brand-module { font-size: 12px; }
+            .clock-module { margin-left: 10px; padding: 5px 8px; }
         }
-
-        .nav-btn {
-            width: 50px;
-            height: 50px;
-            background: #1c2128;
-            border: 1px solid #30363d;
-            color: #8b949e;
-            border-radius: 12px;
+    </style>
+</head>
+<body>
