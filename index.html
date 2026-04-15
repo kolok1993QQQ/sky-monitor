@@ -120,43 +120,44 @@
             <div class="server-label">SERVER ONLINE</div>
             <div id="online-count">АКТИВЕН</div>
         </div>
-
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
+<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.2.2.min.js"></script>
 <script>
-    // Конфігурація (це тестова БД, працює відразу)
-    const firebaseConfig = {
-        databaseURL: "https://online-counter-default-rtdb.europe-west1.firebasedatabase.app/"
-    };
+    // Ініціалізація системи реального часу
+    const pubnub = new PubNub({
+        publishKey: 'pub-c-490333d0-61c0-449e-99f3-8f645300d6b6',
+        subscribeKey: 'sub-c-5f4e1f70-d883-11ed-b570-8e100806443c',
+        uuid: 'user_' + Math.random().toString(36).slice(2, 9)
+    });
 
-    // Ініціалізація
-    if (!firebase.apps.length) {
-        firebase.initializeApp(firebaseConfig);
+    // Підписка на канал моніторингу
+    pubnub.subscribe({
+        channels: ['monitoring_online'],
+        withPresence: true
+    });
+
+    // Оновлення цифри на сайті
+    function updateWebDisplay(count) {
+        const display = document.getElementById("site-online");
+        if (display) {
+            display.innerText = (count || 1).toString().padStart(3, '0');
+        }
     }
-    const db = firebase.database();
-    
-    // Створюємо унікальний ID для цієї сесії (вкладки)
-    const myId = Math.random().toString(36).substring(7);
-    const onlineRef = db.ref('online_users');
-    const myRef = onlineRef.child(myId);
 
-    // Функція відображення
-    function updateDisplay(count) {
-        document.getElementById("site-online").innerText = count.toString().padStart(3, '0');
-    }
+    // Слухаємо вхід/вихід користувачів
+    pubnub.addListener({
+        presence: (event) => {
+            updateWebDisplay(event.occupancy);
+        }
+    });
 
-    // Коли користувач заходить
-    myRef.set(true);
-
-    // Коли користувач закриває вкладку або вимикає інтернет - видаляємо його з БД автоматично
-    myRef.onDisconnect().remove();
-
-    // СЛУХАЄМО ЗМІНИ В РЕАЛЬНОМУ ЧАСІ
-    onlineRef.on('value', (snapshot) => {
-        const count = snapshot.numChildren() || 1;
-        updateDisplay(count);
-        console.log("Поточний онлайн:", count);
+    // Отримуємо кількість людей одразу при завантаженні
+    pubnub.hereNow({
+        channels: ['monitoring_online'],
+        includeUUIDs: false
+    }, (status, response) => {
+        if (!status.error) {
+            updateWebDisplay(response.channels['monitoring_online'].occupancy);
+        }
     });
 </script>
 
