@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
     <title>MONITORING UA</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,7 +12,7 @@
         :root { 
             --accent: #00f2ff; 
             --bg: #05070a; 
-            --panel: rgba(13, 17, 23, 0.85); 
+            --panel: rgba(13, 17, 23, 0.9); 
             --border: rgba(0, 242, 255, 0.2);
             --danger: #ff003c;
             --tg-blue: #0088cc;
@@ -21,7 +20,7 @@
             --success: #00ff66;
         }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; }
         
         body, html { 
             margin: 0; padding: 0; height: 100%; 
@@ -30,69 +29,53 @@
             color: #fff; overflow: hidden;
         }
 
+        /* Фонова сітка */
         body::before {
             content: ""; position: absolute; inset: 0;
             background-image: linear-gradient(var(--border) 1px, transparent 1px), 
                               linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px; opacity: 0.15; z-index: 0; pointer-events: none;
+            background-size: 40px 40px; opacity: 0.1; z-index: 0; pointer-events: none;
         }
 
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; z-index: 1; }
 
         .header { 
-            height: 80px; display: flex; align-items: center; padding: 0 25px; 
-            background: var(--panel); backdrop-filter: blur(20px); 
+            height: 85px; display: flex; align-items: center; padding: 0 20px; 
+            background: var(--panel); backdrop-filter: blur(10px); 
             border-bottom: 2px solid var(--accent);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
         }
         
         .brand { 
-            font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 900; 
-            color: var(--accent); text-transform: uppercase; letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-            line-height: 1.2;
+            font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 900; 
+            color: var(--accent); text-transform: uppercase; letter-spacing: 1px;
         }
 
-        /* Загальний стиль для інформаційних блоків */
         .info-block {
-            margin-left: 20px; padding-left: 15px; border-left: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 2px;
+            margin-left: 15px; padding-left: 15px; border-left: 1px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center;
         }
 
-        .server-label { font-size: 9px; font-weight: 900; color: #8b949e; letter-spacing: 1px; text-transform: uppercase; }
+        .label { font-size: 8px; font-weight: 900; color: #8b949e; text-transform: uppercase; margin-bottom: 2px; }
         
-        #kyiv-time { font-size: 20px; font-weight: 800; color: #fff; }
-        #online-count { font-size: 18px; font-weight: 800; color: var(--success); text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
-        #site-online { font-size: 18px; font-weight: 800; color: var(--accent); text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); }
+        .value { font-size: 18px; font-weight: 800; line-height: 1; }
+        #online-count { color: var(--success); }
+        #site-online { color: var(--accent); }
 
-        .btn-group { margin-left: auto; display: flex; gap: 10px; }
+        .btn-group { margin-left: auto; display: flex; gap: 8px; }
         .neon-btn {
-            padding: 10px 16px; border-radius: 8px; text-decoration: none; 
-            font-weight: 900; font-size: 11px; transition: 0.3s;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
-            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 6px; text-decoration: none; 
+            font-weight: 800; font-size: 10px; text-transform: uppercase;
+            display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.1);
         }
         .btn-tg { background: rgba(0, 136, 204, 0.1); color: #fff; border-color: var(--tg-blue); }
-        .btn-tg:hover { background: var(--tg-blue); box-shadow: 0 0 15px var(--tg-blue); }
         .btn-donate { background: var(--gold); color: #000; border: none; }
-        .btn-donate:hover { box-shadow: 0 0 15px var(--gold); }
 
-        .viewport { 
-            flex-grow: 1; margin: 10px; border-radius: 15px; 
-            overflow: hidden; background: #000; border: 1px solid var(--border); 
-            position: relative; 
-        }
+        .viewport { flex-grow: 1; margin: 10px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #000; }
         iframe { width: 100%; height: 100%; border: none; }
 
-        @media (max-width: 900px) {
-            .header { height: auto; padding: 10px; flex-wrap: wrap; gap: 10px; justify-content: center; }
-            .info-block { margin-left: 10px; padding-left: 10px; min-width: 80px; }
+        @media (max-width: 850px) {
+            .header { height: auto; padding: 10px; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .brand { width: 100%; text-align: center; }
             .btn-group { width: 100%; justify-content: center; }
         }
-    </style>
-</head>
-<body>
-
-<div class="wrapper">
-    <header class="header">
-        <div class="brand">SYSTEM
+    </
