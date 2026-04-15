@@ -121,35 +121,44 @@
             <div id="online-count">АКТИВЕН</div>
         </div>
 
-        <script>
-// Використовуємо простий і надійний API для підрахунку
-async function updateWebOnline() {
-    try {
-        // Ми використовуємо countapi.xyz або аналог для миттєвого підрахунку
-        // Але для "живого" онлайну (хто зараз на сайті) найкраще працює цей метод:
-        const siteID = window.location.hostname || "monitoring-ua-project";
-        const response = await fetch(`https://api.countapi.xyz/hit/${siteID}/visits`);
-        const data = await response.json();
-        
-        // Оскільки це лічильник переглядів, ми імітуємо онлайн від активності
-        // Для реального ЖИВОГО онлайну без бази даних — ось найнадійніший скрипт:
-        
-        // Генеруємо випадкове число для тесту (видали це, коли піде реальний трафік)
-        // Або залиш як є для красивого вигляду
-        let currentOnline = Math.floor(Math.random() * 3) + 1; 
-        
-        document.getElementById("site-online").innerText = currentOnline.toString().padStart(3, '0');
-    } catch (e) {
-        // Якщо API лежить, показуємо хоча б 001
-        document.getElementById("site-online").innerText = "001";
-    }
-}
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-// Оновлюємо кожні 10 секунд
-setInterval(updateWebOnline, 10000);
-updateWebOnline();
+<script>
+    // Конфігурація (це тестова БД, працює відразу)
+    const firebaseConfig = {
+        databaseURL: "https://online-counter-default-rtdb.europe-west1.firebasedatabase.app/"
+    };
+
+    // Ініціалізація
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+    
+    // Створюємо унікальний ID для цієї сесії (вкладки)
+    const myId = Math.random().toString(36).substring(7);
+    const onlineRef = db.ref('online_users');
+    const myRef = onlineRef.child(myId);
+
+    // Функція відображення
+    function updateDisplay(count) {
+        document.getElementById("site-online").innerText = count.toString().padStart(3, '0');
+    }
+
+    // Коли користувач заходить
+    myRef.set(true);
+
+    // Коли користувач закриває вкладку або вимикає інтернет - видаляємо його з БД автоматично
+    myRef.onDisconnect().remove();
+
+    // СЛУХАЄМО ЗМІНИ В РЕАЛЬНОМУ ЧАСІ
+    onlineRef.on('value', (snapshot) => {
+        const count = snapshot.numChildren() || 1;
+        updateDisplay(count);
+        console.log("Поточний онлайн:", count);
+    });
 </script>
-        
 
         <div class="btn-group">
             <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">
