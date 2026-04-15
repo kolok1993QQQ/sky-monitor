@@ -121,6 +121,43 @@
             <div id="online-count">---</div>
         </div>
 
+
+        <div class="site-visitors-container">
+    <div class="server-label">SITE VISITORS</div>
+    <div id="site-online">001</div>
+</div>
+
+<style>
+    /* Додай цей стиль до <style> */
+    .site-visitors-container {
+        margin-left: 20px; padding-left: 15px; border-left: 1px solid var(--border);
+        display: flex; flex-direction: column; gap: 2px;
+        min-width: 100px;
+    }
+    #site-online { 
+        font-size: 18px; font-weight: 800; 
+        color: var(--accent); 
+        text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); 
+    }
+</style>
+
+<script id="_waum18">
+    var _wau = _wau || []; _wau.push(["dynamic", "monua_id", "m18", "callback"]);
+    (function() {
+        var s = document.createElement("script"); s.async = true;
+        s.src = "https://widgets.amung.us/a_dynamic.js";
+        document.getElementsByTagName("head")[0].appendChild(s);
+    })();
+
+    // Функція-колбек, яка забирає цифру з віджета і вписує в твій дизайн
+    function callback(data) {
+        // Форматуємо число (наприклад, 1 перетворюємо в 001 для стилю)
+        let count = data.count.toString().padStart(3, '0');
+        document.getElementById("site-online").innerText = count;
+    }
+</script>
+        
+
         <div class="btn-group">
             <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">
                 <i class="fa-brands fa-telegram"></i> <span>Telegram</span>
