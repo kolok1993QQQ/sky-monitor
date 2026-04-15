@@ -18,7 +18,7 @@
             --danger: #ff003c;
             --tg-blue: #0088cc;
             --gold: #ffd700;
-            --success: #00ff66; /* Додано для онлайну */
+            --success: #00ff66;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -53,29 +53,17 @@
             line-height: 1.2;
         }
 
-        .status-container {
+        /* Загальний стиль для інформаційних блоків */
+        .info-block {
             margin-left: 20px; padding-left: 15px; border-left: 1px solid var(--border);
             display: flex; flex-direction: column; gap: 2px;
         }
 
-        /* Стиль для моніторингу сервера */
-        .server-container {
-            margin-left: 20px; padding-left: 15px; border-left: 1px solid var(--border);
-            display: flex; flex-direction: column; gap: 2px;
-            min-width: 120px;
-        }
-        #online-count { font-size: 18px; font-weight: 800; color: var(--success); text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
-        .server-label { font-size: 9px; font-weight: 900; color: #8b949e; letter-spacing: 1px; }
-
-        #kyiv-time { font-size: 20px; font-weight: 800; color: #fff; line-height: 1; }
-        .sys-status { font-size: 9px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 6px; letter-spacing: 1px; }
+        .server-label { font-size: 9px; font-weight: 900; color: #8b949e; letter-spacing: 1px; text-transform: uppercase; }
         
-        .blink-dot { 
-            width: 8px; height: 8px; background: var(--danger); 
-            border-radius: 50%; animation: pulse-red 1.5s infinite;
-            box-shadow: 0 0 8px var(--danger);
-        }
-        @keyframes pulse-red { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.2; transform: scale(1.3); } }
+        #kyiv-time { font-size: 20px; font-weight: 800; color: #fff; }
+        #online-count { font-size: 18px; font-weight: 800; color: var(--success); text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
+        #site-online { font-size: 18px; font-weight: 800; color: var(--accent); text-shadow: 0 0 8px rgba(0, 242, 255, 0.4); }
 
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
         .neon-btn {
@@ -94,14 +82,12 @@
             overflow: hidden; background: #000; border: 1px solid var(--border); 
             position: relative; 
         }
-        iframe { width: 100%; height: 100%; border: none; display: none; }
-        iframe.active { display: block; }
-        
-        @media (max-width: 768px) {
-            .header { height: auto; padding: 10px; flex-wrap: wrap; gap: 10px; }
-            .brand { width: 100%; text-align: center; }
-            .status-container, .server-container { margin-left: 0; border: none; padding: 0; }
-            .btn-group { width: 100%; justify-content: space-between; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 900px) {
+            .header { height: auto; padding: 10px; flex-wrap: wrap; gap: 10px; justify-content: center; }
+            .info-block { margin-left: 10px; padding-left: 10px; min-width: 80px; }
+            .btn-group { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -109,70 +95,4 @@
 
 <div class="wrapper">
     <header class="header">
-        <div class="brand">SYSTEM<br>MONITORING UA</div>
-        
-        <div class="status-container">
-            <div class="server-label">KYIV TIME</div>
-            <div id="kyiv-time">00:00:00</div>
-        </div> 
-
-        <div class="server-container">
-            <div class="server-label">SERVER ONLINE</div>
-            <div id="online-count">---</div>
-        </div>
-
-        <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">
-                <i class="fa-brands fa-telegram"></i> <span>Telegram</span>
-            </a>
-            <a href="https://frames2.payhub.com.ua/moneybox?box_id=589cbce5-320d-4d3c-9abc-c4d388138564" target="_blank" class="neon-btn btn-donate">
-                <i class="fa-solid fa-hryvnia-sign"></i> <span>SUPPORT</span>
-            </a>
-        </div>
-    </header>
-
-    <main class="viewport">
-        <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
-    </main>
-</div>
-
-<script>
-    // Оновлення онлайну сервера CS 1.6
-    async function updateServerOnline() {
-        const ip = "172.18.0.54"; 
-        const port = "27153";
-        try {
-            const response = await fetch(`https://api.minetools.eu/query/${ip}/${port}`);
-            const data = await response.json();
-            if (data.status === "OK") {
-                document.getElementById('online-count').innerText = `${data.Players} / ${data.MaxPlayers}`;
-                document.getElementById('online-count').style.color = "#00ff66";
-            } else {
-                document.getElementById('online-count').innerText = "OFFLINE";
-                document.getElementById('online-count').style.color = "#ff003c";
-            }
-        } catch (e) {
-            document.getElementById('online-count').innerText = "ERROR";
-        }
-    }
-
-    // Годинник
-    function updateClock() {
-        const now = new Date();
-        const options = { 
-            timeZone: 'Europe/Kyiv', 
-            hour: '2-digit', minute: '2-digit', second: '2-digit', 
-            hour12: false 
-        };
-        document.getElementById('kyiv-time').innerText = now.toLocaleTimeString('uk-UA', options);
-    }
-
-    setInterval(updateClock, 1000); 
-    setInterval(updateServerOnline, 30000); // Оновлення онлайну кожні 30 сек
-    
-    updateClock();
-    updateServerOnline();
-</script>
-
-</body>
-</html>
+        <div class="brand">SYSTEM
