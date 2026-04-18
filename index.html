@@ -41,6 +41,37 @@
     border: none; /* Прибрали рамку */
     box-shadow: none; /* Прибрали будь-які тіні контейнера */
 }
+
+       .status-badge {
+    margin-left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.blink-dot {
+    width: 8px;
+    height: 8px;
+    background: #ff003c; /* Червоний колір */
+    border-radius: 50%;
+    animation: pulse-red 1s infinite;
+    box-shadow: 0 0 8px #ff003c;
+}
+
+.status-text {
+    font-size: 10px;
+    font-weight: 900;
+    color: #39d353; /* Зелений колір "АКТИВНО" */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@keyframes pulse-red {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+} 
+        
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
         .neon-btn {
             padding: 10px 14px; border-radius: 8px; text-decoration: none; 
@@ -59,16 +90,22 @@
     </style>
 </head>
 <body>
-
 <div class="wrapper">
-    <header class="header">
-        <div class="brand">MONITOR<br>UA</div>
-        <div id="kyiv-time">00:00:00</div>
-        <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn">КАНАЛ</a>
-            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn">ДОНАТ ₴</a>
-        </div>
-    </header>
+  <header class="header">
+    <div class="brand">MONITOR<br>UA</div>
+    
+    <div id="kyiv-time">00:00:00</div>
+    
+    <div class="status-badge">
+        <div class="blink-dot"></div>
+        <span class="status-text">АКТИВНО</span>
+    </div>
+
+    <div class="btn-group">
+        <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn">КАНАЛ</a>
+        <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn">ДОНАТ ₴</a>
+    </div>
+</header>
 
     <main class="viewport">
         <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
