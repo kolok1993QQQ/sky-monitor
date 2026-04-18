@@ -176,6 +176,48 @@
         document.getElementById('kyiv-time').innerText = now.toLocaleTimeString('uk-UA', options);
     }
 
+    <script>
+    const API_URL = 'https://api.ukrainealarm.com/api/v3/alerts/1';
+    const MY_API_KEY = 'eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9'; // Встав ключ сюди
+
+    async function checkAlerts() {
+        const box = document.getElementById('status-box');
+        box.innerText = "ПІДКЛЮЧЕННЯ...";
+        
+        try {
+            const response = await fetch(API_URL, {
+                headers: {
+                    'Authorization': MY_API_KEY,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                // Якщо помилка, покажемо код помилки прямо на екрані
+                box.innerText = "ПОМИЛКА: " + response.status;
+                box.style.color = "yellow";
+                return;
+            }
+
+            const data = await response.json();
+            // Логіка перевірки тривоги
+            if (data && data.length > 0 && data[0].activeAlerts.length > 0) {
+                box.innerText = "УВАГА: ТРИВОГА";
+                box.className = "status-box active";
+            } else {
+                box.innerText = "СТАТУС: СПОКІЙНО";
+                box.className = "status-box";
+            }
+        } catch (e) {
+            box.innerText = "ПОМИЛКА СЕРВЕРА";
+            console.error(e);
+        }
+    }
+
+    setInterval(checkAlerts, 15000);
+    checkAlerts();
+</script>
+
     setInterval(updateClock, 1000); 
     updateClock();
 </script>
