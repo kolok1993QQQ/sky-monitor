@@ -176,7 +176,10 @@
         document.getElementById('kyiv-time').innerText = now.toLocaleTimeString('uk-UA', options);
     }
 
-    
+    const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36',
+    'Authorization': 'eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9'
+};
     const API_URL = 'https://api.ukrainealarm.com/api/v3/alerts/1';
     const MY_API_KEY = 'eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9'; // Встав ключ сюди
 
