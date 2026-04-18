@@ -2,35 +2,98 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Sky Monitor | OSINT HUB</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>Sky Monitor | МОНІТОР НЕБА — Карта тривог та авіації</title>
+    <meta name="description" content="Оперативний моніторинг неба, повітряних тривог та авіації у реальному часі. Професійний OSINT-центр.">
+    <meta name="keywords" content="карта тривог, deepstate, моніторинг авіації, sky monitor, монітор неба, повітряна тривога онлайн">
+    <meta name="author" content="Sky Monitor">
+    <link rel="canonical" href="https://sky-monitor.fun">
+
     <style>
-        :root { --accent: #00f2ff; --bg: #0d1117; --card: rgba(22, 27, 34, 0.95); --danger: #ff003c; --support-green: #39d353; }
+        :root { 
+            --accent: #00f2ff; 
+            --bg: #0d1117; 
+            --card: rgba(22, 27, 34, 0.95); 
+            --gold: #ffd700; 
+            --tg-blue: #0088cc;
+            --support-green: #39d353;
+            --danger: #ff003c;
+        }
+        
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
         .wrapper { display: flex; flex-direction: column; height: 100vh; }
 
         /* ШАПКА */
-        .header { height: 70px; display: flex; align-items: center; padding: 0 20px; background: var(--card); border-bottom: 2px solid var(--accent); }
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; }
-        #kyiv-time { margin-left: 20px; font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 800; }
-
-        /* ГОЛОВНА ЗОНА З ПАНЕЛЯМИ */
-        .main-content { display: flex; flex-grow: 1; gap: 10px; padding: 10px; height: calc(100vh - 140px); }
-        .side-panel { width: 250px; background: var(--card); border: 1px solid #30363d; border-radius: 10px; padding: 15px; overflow-y: auto; }
-        .side-panel h3 { font-size: 11px; color: var(--accent); margin-top: 0; text-transform: uppercase; }
+        .header { 
+            height: 85px; display: flex; align-items: center; padding: 0 20px; 
+            background: var(--card); backdrop-filter: blur(15px); 
+            border-bottom: 2px solid var(--accent); z-index: 10;
+        }
         
-        /* ЦЕНТР */
-        .viewport { flex-grow: 1; border-radius: 10px; overflow: hidden; border: 1px solid #30363d; background: #000; position: relative; }
+        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* КРАСИВИЙ ГОДИННИК ТА СТАТУС */
+        .status-container {
+            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        #kyiv-time { 
+            font-family: 'JetBrains Mono', monospace; font-size: 22px; 
+            font-weight: 800; color: #fff; line-height: 1;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        .sys-status { 
+            font-size: 10px; font-weight: 900; color: var(--danger); 
+            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
+        }
+        
+        /* МИГАЮЧИЙ КРУЖОК */
+        .blink-dot { 
+            width: 8px; height: 8px; background: var(--danger); 
+            border-radius: 50%; animation: pulse-red 1s infinite;
+            box-shadow: 0 0 8px var(--danger);
+        }
+        @keyframes pulse-red {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* БІЖУЧИЙ РЯДОК */
+        .marquee-container {
+            background: #000; color: var(--accent); padding: 6px 0;
+            font-size: 11px; font-weight: 800; border-bottom: 1px solid #30363d;
+            overflow: hidden; white-space: nowrap;
+        }
+        .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+        /* КНОПКИ */
+        .btn-group { margin-left: auto; display: flex; gap: 10px; }
+        .neon-btn {
+            padding: 10px 14px; border-radius: 8px; text-decoration: none; 
+            font-weight: 900; font-size: 11px; transition: 0.3s;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-tg { background: var(--tg-blue); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
+        .btn-support { background: var(--support-green); color: #000; box-shadow: 0 0 15px rgba(57, 211, 83, 0.4); }
+        .btn-donate { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        .neon-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
+        /* НАВІГАЦІЯ */
+        .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; background: rgba(0,0,0,0.4); }
+        .nav-btn {
+            background: #1c2128; border: 1px solid #30363d; color: #8b949e;
+            padding: 12px 20px; border-radius: 10px; cursor: pointer; 
+            font-weight: 800; font-size: 13px; flex-shrink: 0; transition: 0.2s;
+        }
+        .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
+
+        /* В'ЮПОРТ */
+        .viewport { flex-grow: 1; margin: 0 10px 10px 10px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
-
-        /* НАВІГАЦІЯ ТА ФУНКЦІЇ */
-        .nav-container { padding: 5px 10px; display: flex; gap: 10px; background: rgba(0,0,0,0.4); align-items: center; }
-        .nav-btn { background: #1c2128; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .nav-btn.active { background: var(--accent); color: #000; font-weight: bold; }
-        
-        /* ЛОГ */
-        #log-content { font-family: monospace; font-size: 10px; color: var(--support-green); line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -38,66 +101,55 @@
 <div class="wrapper">
     <header class="header">
         <div class="brand">EN0T1K_UA<br>MONITOR</div>
-        <div id="kyiv-time">00:00:00</div>
+        
+        <div class="status-container">
+            <div id="kyiv-time">00:00:00</div>
+            <div class="sys-status">
+                <div class="blink-dot"></div> СИСТЕМА АКТИВНА 
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
+            <a href="https://t.me/monitorkiev_bot" target="_blank" class="neon-btn btn-support">ПОДЕРШКА</a>
+            <a href="https://frames2.payhub.com.ua/moneybox?box_id=589cbce5-320d-4d3c-9abc-c4d388138564" target="_blank" class="neon-btn btn-donate">ПИТРИМКА ПРОЕКТА ₴</a>
+        </div>
     </header>
+
+    <div class="marquee-container">
+        <div class="marquee-text">
+            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV ДЛЯ ОПЕРАТИВНИХ ОПОВІЩЕНЬ... ПІДТРИМУЙТЕ ЗСУ...
+        </div>
+    </div>
 
     <nav class="nav-container">
         <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
         <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
         <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
-        <div style="margin-left: auto; display: flex; gap: 5px;">
-            <button class="nav-btn" onclick="location.reload()" title="Оновити">🔄</button>
-            <button class="nav-btn" onclick="toggleContrast()" style="background:#ffd700; color:#000;" title="Нічний режим">🕶️</button>
-        </div>
     </nav>
 
-    <div class="main-content">
-        <aside class="side-panel">
-            <h3>Системний лог</h3>
-            <div id="log-content"></div>
-        </aside>
-
-        <main class="viewport">
-            <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
-            <iframe id="m2" src="https://deepstatemap.live/"></iframe>
-            <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
-        </main>
-
-        <aside class="side-panel">
-            <h3>Корисні посилання</h3>
-            <a href="https://t.me/manitoringkiev" style="color:var(--accent); font-size: 12px; display:block; margin-bottom:10px;">Telegram канал</a>
-            <a href="https://t.me/monitorkiev_bot" style="color:var(--accent); font-size: 12px; display:block;">Бот сповіщень</a>
-        </aside>
-    </div>
+    <main class="viewport">
+        <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
+        <iframe id="m2" src="https://deepstatemap.live/"></iframe>
+        <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
+        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/?tune=8847usb"></iframe>
+        <iframe id="m5" src="https://www.windy.com/"></iframe>
+    </main>
 </div>
 
 <script>
-    // Перемикання вкладок
     function tab(id, btn) {
         document.querySelectorAll('iframe, .nav-btn').forEach(el => el.classList.remove('active'));
         document.getElementById(id).classList.add('active');
         btn.classList.add('active');
     }
-
-    // Годинник
-    setInterval(() => {
-        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false });
-    }, 1000);
-
-    // Кібер-лог
-    const logs = ["SCANNING SECTOR 1...", "RADAR: ONLINE", "NETWORK: STABLE", "SATELLITE: SYNC...", "THREAT DETECTION: ACTIVE", "OSINT MODULE: READY"];
-    function addLog() {
-        const div = document.getElementById('log-content');
-        const msg = logs[Math.floor(Math.random() * logs.length)];
-        div.innerHTML = "> " + msg + "<br>" + div.innerHTML;
-        if (div.innerHTML.length > 600) div.innerHTML = div.innerHTML.substring(0, 600);
+    function updateClock() {
+        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
+            timeZone: 'Europe/Kyiv', 
+            hour12: false 
+        });
     }
-    setInterval(addLog, 2500);
-
-    // Нічний режим
-    function toggleContrast() {
-        document.body.style.filter = document.body.style.filter === 'invert(1) hue-rotate(180deg)' ? 'none' : 'invert(1) hue-rotate(180deg)';
-    }
+    setInterval(updateClock, 1000); updateClock();
 </script>
 
 </body>
