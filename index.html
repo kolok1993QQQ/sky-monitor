@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>Sky Monitor | OSINT HUB — Карта тривог та авіації</title>
-    <meta name="description" content="Професійний OSINT-хаб від En0T1k_UA. Моніторинг повітряних тривог та авіації.">
-    <meta name="keywords" content="карта тривог, deepstate, моніторинг авіації, sky monitor, енотік юа">
-    <meta name="author" content="En0T1k_UA">
-    <link rel="canonical" href="https://sky-monitor.fun">
-
+    <title>Sky Monitor | OSINT HUB</title>
+    
     <style>
         :root { 
             --accent: #00f2ff; 
             --bg: #0d1117; 
-            --card: rgba(22, 27, 34, 0.95); 
+            --card: rgba(22, 27, 34, 0.85); 
             --gold: #ffd700; 
             --tg-blue: #0088cc;
             --support-green: #39d353;
             --danger: #ff003c;
+            --neon-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
         }
         
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
@@ -28,70 +25,59 @@
         .header { 
             height: 85px; display: flex; align-items: center; padding: 0 20px; 
             background: var(--card); backdrop-filter: blur(15px); 
-            border-bottom: 2px solid var(--accent); z-index: 10;
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 5px 20px rgba(0, 242, 255, 0.2);
+            z-index: 10;
         }
         
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; text-shadow: 0 0 10px var(--accent); }
         
-        /* КРАСИВИЙ ГОДИННИК ТА СТАТУС */
-        .status-container {
-            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
-            display: flex; flex-direction: column; gap: 2px;
-        }
         #kyiv-time { 
-            font-family: 'JetBrains Mono', monospace; font-size: 22px; 
-            font-weight: 800; color: #fff; line-height: 1;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        .sys-status { 
-            font-size: 10px; font-weight: 900; color: var(--danger); 
-            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
+            margin-left: 20px; font-family: 'JetBrains Mono', monospace; font-size: 22px; 
+            font-weight: 800; color: #fff; text-shadow: 0 0 15px #fff, 0 0 20px var(--accent);
         }
         
-        /* МИГАЮЧИЙ КРУЖОК */
-        .blink-dot { 
-            width: 8px; height: 8px; background: var(--danger); 
-            border-radius: 50%; animation: pulse-red 1s infinite;
-            box-shadow: 0 0 8px var(--danger);
-        }
-        @keyframes pulse-red {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+        .sys-status { font-size: 10px; font-weight: 900; color: var(--danger); display: flex; align-items: center; gap: 6px; }
 
         /* БІЖУЧИЙ РЯДОК */
         .marquee-container {
-            background: #000; color: var(--accent); padding: 6px 0;
-            font-size: 11px; font-weight: 800; border-bottom: 1px solid #30363d;
+            background: #000; color: var(--accent); padding: 8px 0;
+            font-size: 11px; font-weight: 800; border-bottom: 1px solid var(--accent);
+            text-shadow: 0 0 8px var(--accent);
             overflow: hidden; white-space: nowrap;
         }
         .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
         @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
 
-        /* КНОПКИ */
+        /* НЕОНОВІ КНОПКИ */
         .btn-group { margin-left: auto; display: flex; gap: 10px; }
         .neon-btn {
             padding: 10px 14px; border-radius: 8px; text-decoration: none; 
             font-weight: 900; font-size: 11px; transition: 0.3s;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+            text-transform: uppercase; border: 1px solid var(--accent);
+            color: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
         }
-        .btn-tg { background: var(--tg-blue); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
-        .btn-support { background: var(--support-green); color: #000; box-shadow: 0 0 15px rgba(57, 211, 83, 0.4); }
-        .btn-donate { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-        .neon-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        .neon-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px var(--accent); }
 
         /* НАВІГАЦІЯ */
-        .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; background: rgba(0,0,0,0.4); }
+        .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; background: rgba(0,0,0,0.4); }
         .nav-btn {
             background: #1c2128; border: 1px solid #30363d; color: #8b949e;
             padding: 12px 20px; border-radius: 10px; cursor: pointer; 
-            font-weight: 800; font-size: 13px; flex-shrink: 0; transition: 0.2s;
+            font-weight: 800; font-size: 13px; transition: 0.3s;
         }
-        .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
+        .nav-btn.active { 
+            background: var(--accent); color: #000; 
+            box-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent);
+            border-color: #fff;
+        }
 
         /* В'ЮПОРТ */
-        .viewport { flex-grow: 1; margin: 0 10px 10px 10px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
+        .viewport { 
+            flex-grow: 1; margin: 10px; border-radius: 15px; overflow: hidden; 
+            background: #000; border: 2px solid var(--accent); 
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
         iframe { width: 100%; height: 100%; border: none; display: none; }
         iframe.active { display: block; }
     </style>
@@ -101,23 +87,16 @@
 <div class="wrapper">
     <header class="header">
         <div class="brand">MONITOR<br>UA</div>
-        
-        <div class="status-container">
-            <div id="kyiv-time">00:00:00</div>
-            <div class="sys-status">
-                <div class="blink-dot"></div> СИСТЕМА АКТИВНА
-            </div>
-        </div>
-
+        <div id="kyiv-time">00:00:00</div>
         <div class="btn-group">
-            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn btn-donate">ДОНАТ ₴</a>
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
+            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn">КАНАЛ</a>
+            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn">ДОНАТ ₴</a>
         </div>
     </header>
 
     <div class="marquee-container">
         <div class="marquee-text">
-            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV ДЛЯ ОПЕРАТИВНИХ ОПОВІЩЕНЬ... ПІДТРИМУЙТЕ ЗСУ...
+            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV...
         </div>
     </div>
 
@@ -143,13 +122,9 @@
         btn.classList.add('active');
     }
     function updateClock() {
-        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
-            timeZone: 'Europe/Kyiv', 
-            hour12: false 
-        });
+        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false });
     }
     setInterval(updateClock, 1000); updateClock();
 </script>
-
 </body>
 </html>
