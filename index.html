@@ -1,158 +1,1272 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>Sky Monitor | МОНІТОР НЕБА — Карта тривог та авіації</title>
-    <meta name="description" content="Оперативний моніторинг неба, повітряних тривог та авіації у реальному часі. Професійний OSINT-центр.">
-    <meta name="keywords" content="карта тривог, deepstate, моніторинг авіації, sky monitor, монітор неба, повітряна тривога онлайн">
-    <meta name="author" content="Sky Monitor">
-    <link rel="canonical" href="https://sky-monitor.fun">
-
-    <style>
-        :root { 
-            --accent: #00f2ff; 
-            --bg: #0d1117; 
-            --card: rgba(22, 27, 34, 0.95); 
-            --gold: #ffd700; 
-            --tg-blue: #0088cc;
-            --support-green: #39d353;
-            --danger: #ff003c;
-        }
-        
-        body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
-        .wrapper { display: flex; flex-direction: column; height: 100vh; }
-
-        /* ШАПКА */
-        .header { 
-            height: 85px; display: flex; align-items: center; padding: 0 20px; 
-            background: var(--card); backdrop-filter: blur(15px); 
-            border-bottom: 2px solid var(--accent); z-index: 10;
-        }
-        
-        .brand { font-size: 14px; font-weight: 900; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* КРАСИВИЙ ГОДИННИК ТА СТАТУС */
-        .status-container {
-            margin-left: 20px; padding-left: 15px; border-left: 1px solid #30363d;
-            display: flex; flex-direction: column; gap: 2px;
-        }
-        #kyiv-time { 
-            font-family: 'JetBrains Mono', monospace; font-size: 22px; 
-            font-weight: 800; color: #fff; line-height: 1;
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        .sys-status { 
-            font-size: 10px; font-weight: 900; color: var(--danger); 
-            display: flex; align-items: center; gap: 6px; text-transform: uppercase;
-        }
-        
-        /* МИГАЮЧИЙ КРУЖОК */
-        .blink-dot { 
-            width: 8px; height: 8px; background: var(--danger); 
-            border-radius: 50%; animation: pulse-red 1s infinite;
-            box-shadow: 0 0 8px var(--danger);
-        }
-        @keyframes pulse-red {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.2); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        /* БІЖУЧИЙ РЯДОК */
-        .marquee-container {
-            background: #000; color: var(--accent); padding: 6px 0;
-            font-size: 11px; font-weight: 800; border-bottom: 1px solid #30363d;
-            overflow: hidden; white-space: nowrap;
-        }
-        .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
-        @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
-
-        /* КНОПКИ */
-        .btn-group { margin-left: auto; display: flex; gap: 10px; }
-        .neon-btn {
-            padding: 10px 14px; border-radius: 8px; text-decoration: none; 
-            font-weight: 900; font-size: 11px; transition: 0.3s;
-            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .btn-tg { background: var(--tg-blue); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
-        .btn-support { background: var(--support-green); color: #000; box-shadow: 0 0 15px rgba(57, 211, 83, 0.4); }
-        .btn-donate { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
-        .neon-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
-
-        /* НАВІГАЦІЯ */
-        .nav-container { padding: 12px; display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; background: rgba(0,0,0,0.4); }
-        .nav-btn {
-            background: #1c2128; border: 1px solid #30363d; color: #8b949e;
-            padding: 12px 20px; border-radius: 10px; cursor: pointer; 
-            font-weight: 800; font-size: 13px; flex-shrink: 0; transition: 0.2s;
-        }
-        .nav-btn.active { background: var(--accent); color: #000; box-shadow: 0 0 15px var(--accent); border-color: #fff; }
-
-        /* В'ЮПОРТ */
-        .viewport { flex-grow: 1; margin: 0 10px 10px 10px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid #30363d; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
-        iframe { width: 100%; height: 100%; border: none; display: none; }
-        iframe.active { display: block; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StrategicAviation — Live мапа</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #0a2e1b 0%, #04170e 62%, #010805 100%);
+      color: #e8f5ec;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 14px 30px;
+    }
+    .version-badge {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 20;
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(134,239,172,.22);
+      background: rgba(3,20,12,.72);
+      backdrop-filter: blur(8px);
+      color: #d9fbe6;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      box-shadow: 0 8px 24px rgba(0,0,0,.22);
+    }
+    .hero {
+      text-align: center;
+      padding: 18px 10px 22px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1px solid rgba(52,211,153,.35);
+      border-radius: 999px;
+      background: rgba(9,33,22,.72);
+      color: #9cf5c2;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+    }
+    h1 {
+      font-size: clamp(28px, 6vw, 56px);
+      margin-top: 14px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      color: #f2fff7;
+      text-shadow: 0 0 25px rgba(16,185,129,.35);
+    }
+    .sub {
+      margin: 14px auto 0;
+      max-width: 760px;
+      font-size: clamp(14px, 3.5vw, 18px);
+      line-height: 1.6;
+      color: #c7e8d5;
+    }
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 18px;
+    }
+    .btn {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: .2s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #f3fff8;
+      box-shadow: 0 10px 30px rgba(22,163,74,.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-secondary {
+      background: rgba(10,30,20,.92);
+      border: 1px solid rgba(74,222,128,.2);
+      color: #daf6e6;
+    }
+    .btn-secondary:hover { background: rgba(14,45,30,.95); }
+    .btn-support {
+      background: rgba(28,22,8,.88);
+      border: 1px solid rgba(250,204,21,.38);
+      color: #fef3c7;
+      box-shadow: 0 8px 24px rgba(0,0,0,.25);
+    }
+    .btn-support:hover { background: rgba(42,34,12,.92); transform: translateY(-1px); }
+    .online-line {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 14px;
+      color: #8cd3a9;
+    }
+    .online-line strong {
+      color: #c6f6d5;
+      font-variant-numeric: tabular-nums;
+    }
+    .card {
+      margin-top: 18px;
+      background: rgba(3,16,10,.84);
+      border: 1px solid rgba(74,222,128,.2);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+      backdrop-filter: blur(8px);
+    }
+    .card-head {
+      padding: 16px 16px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .card-title {
+      font-size: clamp(18px, 4vw, 24px);
+      font-weight: 800;
+      color: #f2fff7;
+    }
+    .card-meta {
+      font-size: 13px;
+      color: #8cd3a9;
+      line-height: 1.55;
+      max-width: 720px;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 14px;
+    }
+    .control-btn {
+      border: 1px solid rgba(74,222,128,.2);
+      background: rgba(6,22,14,.9);
+      color: #daf6e6;
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .control-btn:hover { background: rgba(11,38,24,.95); }
+    .viewer {
+      position: relative;
+      width: 100%;
+      height: min(78vh, 820px);
+      background: #03140c;
+      border-top: 1px solid rgba(74,222,128,.15);
+      overflow: hidden;
+      touch-action: none;
+    }
+    .map-stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .uav-layer,
+    .ukraine-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform-origin: center center;
+      pointer-events: none;
+      max-width: none;
+      max-height: none;
+    }
+    .ukraine-overlay {
+      opacity: .18;
+      z-index: 2;
+      mix-blend-mode: screen;
+    }
+    .uav-layer {
+      z-index: 3;
+      overflow: visible;
+    }
+    .uav-icon {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      transform-origin: center center;
+      filter: drop-shadow(0 0 6px rgba(239, 68, 68, .45));
+      user-select: none;
+    }
+    .cruise-icon {
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      transform-origin: center center;
+      filter: drop-shadow(0 0 7px rgba(251, 146, 60, .5));
+      user-select: none;
+    }
+    .ballistic-icon {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      transform-origin: center center;
+      filter: drop-shadow(0 0 8px rgba(250, 204, 21, .55));
+      user-select: none;
+    }
+    @media (max-width: 768px) {
+      .version-badge {
+        top: 10px;
+        right: 10px;
+        padding: 7px 10px;
+        font-size: 11px;
+      }
+      .uav-icon,
+      .cruise-icon {
+        width: calc(26px / 2.2);
+        height: calc(26px / 2.2);
+      }
+      .ballistic-icon {
+        width: calc(28px / 2.2);
+        height: calc(28px / 2.2);
+      }
+      .uav-icon { filter: drop-shadow(0 0 3px rgba(239, 68, 68, .4)); }
+      .cruise-icon { filter: drop-shadow(0 0 3px rgba(251, 146, 60, .45)); }
+      .ballistic-icon { filter: drop-shadow(0 0 4px rgba(250, 204, 21, .5)); }
+    }
+    .map-image {
+      max-width: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      transform-origin: center center;
+      will-change: transform;
+      display: block;
+      max-height: none;
+      pointer-events: none;
+    }
+    .watermark-top,
+    .watermark-bottom {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      background: rgba(3,20,12,.5);
+      border: 1px solid rgba(134,239,172,.2);
+      backdrop-filter: blur(6px);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      text-shadow: 0 0 12px rgba(0,0,0,.6);
+      text-align: center;
+      max-width: calc(100% - 20px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .watermark-top {
+      top: 12px;
+      font-size: clamp(11px, 2.6vw, 14px);
+      color: #dcfce7;
+    }
+    .watermark-bottom {
+      bottom: 12px;
+      font-size: clamp(10px, 2.3vw, 13px);
+      color: #bbf7d0;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 16px 18px;
+      color: #8cd3a9;
+      font-size: 13px;
+      flex-wrap: wrap;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34,197,94,.8);
+      animation: pulse 1.6s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: .7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .launches-card {
+      margin-top: 18px;
+      background: rgba(3,16,10,.84);
+      border: 1px solid rgba(74,222,128,.2);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.28);
+      backdrop-filter: blur(8px);
+    }
+    .launches-head {
+      padding: 16px;
+      border-bottom: 1px solid rgba(74,222,128,.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .launches-title {
+      font-size: clamp(17px, 3.8vw, 23px);
+      font-weight: 800;
+      color: #f2fff7;
+    }
+    .launches-sub {
+      color: #8cd3a9;
+      font-size: 13px;
+    }
+    .overall-status {
+      border-radius: 999px;
+      padding: 7px 12px;
+      border: 1px solid rgba(74,222,128,.28);
+      background: rgba(6,22,14,.9);
+      color: #daf6e6;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      font-weight: 800;
+    }
+    .overall-status.active {
+      color: #dcfce7;
+      border-color: rgba(34,197,94,.45);
+      box-shadow: 0 0 20px rgba(34,197,94,.25);
+    }
+    .launches-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 0;
+    }
+    .launches-col {
+      padding: 14px 16px 16px;
+    }
+    .launches-col + .launches-col {
+      border-left: 1px solid rgba(74,222,128,.15);
+    }
+    .launches-col h3 {
+      font-size: 14px;
+      font-weight: 800;
+      color: #dcfce7;
+      margin-bottom: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .site-list, .events-list {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+    .site-item, .event-item {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(74,222,128,.2);
+      background: rgba(7,26,16,.68);
+    }
+    .site-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .site-name {
+      color: #e6ffee;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .site-region {
+      color: #9dd9b8;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+    .launch-badge {
+      border-radius: 999px;
+      border: 1px solid rgba(134,239,172,.3);
+      padding: 5px 9px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .launch-badge.none {
+      color: #bbf7d0;
+      background: rgba(6,22,14,.9);
+    }
+    .launch-badge.active {
+      color: #dcfce7;
+      border-color: rgba(34,197,94,.55);
+      background: rgba(20,83,45,.55);
+      box-shadow: 0 0 14px rgba(34,197,94,.25);
+    }
+    .event-item {
+      color: #c7e8d5;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .event-item small {
+      color: #9dd9b8;
+    }
+    .empty-events {
+      color: #9dd9b8;
+      font-size: 14px;
+      padding: 10px 2px;
+    }
+    @media (max-width: 768px) {
+      .viewer {
+        height: auto;
+        min-height: 0;
+      }
+      .watermark-top,
+      .watermark-bottom {
+        display: none;
+      }
+      .controls { gap: 6px; }
+      .control-btn { flex: 1 1 calc(50% - 6px); }
+      .launches-grid { grid-template-columns: 1fr; }
+      .launches-col + .launches-col { border-left: 0; border-top: 1px solid rgba(74,222,128,.15); }
+    }
+  </style>
 </head>
 <body>
+  <div class="version-badge">Версія - 1.0.0</div>
+  <div class="wrap">
+    <section class="hero">
+      <div class="badge">StrategicAviation • Live</div>
+      <h1>Стратегічна авіація</h1>
+      <p class="sub">
+        Актуальна мапа у форматі зображення. Масштабуй, пересувай та відкривай канал у Telegram.
+      </p>
+      <div class="top-actions">
+        <a class="btn btn-primary" href="https://t.me/StrategicAviation" target="_blank" rel="noopener noreferrer">Відкрити Telegram-канал</a>
+        <a class="btn btn-support" href="https://send.monobank.ua/jar/43ajR8WZMX" target="_blank" rel="noopener noreferrer">Підтримати</a>
+        <button class="btn btn-secondary" id="openImageBtn">Відкрити зображення окремо</button>
+      </div>
+      <p class="online-line">Зараз на сайті: <strong id="onlineNow">—</strong></p>
+    </section>
 
-<div class="wrapper">
-    <header class="header">
-        <div class="brand">EN0T1K_UA<br>MONITOR</div>
-        
-        <div class="status-container">
-            <div id="kyiv-time">00:00:00</div>
-            <div class="sys-status">
-                <div class="blink-dot"></div> СИСТЕМА АКТИВНА
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Live мапа</div>
+          <div class="card-meta">Інформація з відкритих джерел, далі обробляється автоматично. Можливі суттєві похибки, затримки та неточності. Мапа лише для орієнтовного розуміння загальної ситуації і не є офіційним або оперативним джерелом.</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="control-btn" id="zoomInBtn">➕ Наблизити</button>
+        <button class="control-btn" id="zoomOutBtn">➖ Віддалити</button>
+        <button class="control-btn" id="resetBtn">🔄 Скинути</button>
+        <button class="control-btn" id="fullscreenBtn">⛶ На весь екран</button>
+      </div>
+
+      <div class="viewer" id="viewer">
+        <div class="watermark-top">StrategicAviation</div>
+        <div class="map-stage" id="mapStage">
+          <img
+            id="mapImage"
+            class="map-image"
+            src="photo_2026-04-09_15-19-51.jpg"
+            alt="Live мапа StrategicAviation"
+          />
+          <img
+            id="ukraineOverlay"
+            class="ukraine-overlay"
+            src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Ukraine_relief_location_map.jpg"
+            alt=""
+          />
+          <div id="uavLayer" class="uav-layer"></div>
+        </div>
+        <div class="watermark-bottom" id="siteWatermark">strategicaviation.site</div>
+      </div>
+
+      <div class="status">
+        <span class="dot"></span>
+        <span id="statusText">Актуальна, орієнтовна мапа з рухом ворожих цілей в повітряному просторі України.</span>
+      </div>
+    </section>
+
+    <section class="launches-card">
+      <div class="launches-head">
+        <div>
+          <div class="launches-title">Пускові локації та запуски БпЛА</div>
+        </div>
+        <div id="overallLaunchStatus" class="overall-status">Запуску немає</div>
+      </div>
+      <div class="launches-grid">
+        <div class="launches-col">
+          <h3>Пускові локації</h3>
+          <ul id="siteList" class="site-list"></ul>
+        </div>
+        <div class="launches-col">
+          <h3>Журнал запусків (час)</h3>
+          <ul id="eventsList" class="events-list"></ul>
+          <div id="emptyEvents" class="empty-events">Запусків поки немає.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // === НАЛАШТУВАННЯ ===
+    // СЮДИ ПІДСТАВИШ СВОЮ КАРТУ (локальний файл або URL)
+    const mapUrl = 'photo_2026-04-09_15-19-51.jpg';
+    const siteUrl = 'https://strategicaviation.site';
+    const telegramUrl = 'https://t.me/StrategicAviation';
+    const launchesApiUrl = 'launches.json';
+
+    const mapImage = document.getElementById('mapImage');
+    const mapStage = document.getElementById('mapStage');
+    const viewer = document.getElementById('viewer');
+    const openImageBtn = document.getElementById('openImageBtn');
+    const siteWatermark = document.getElementById('siteWatermark');
+    const ukraineOverlay = document.getElementById('ukraineOverlay');
+    const uavLayer = document.getElementById('uavLayer');
+
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const siteList = document.getElementById('siteList');
+    const eventsList = document.getElementById('eventsList');
+    const emptyEvents = document.getElementById('emptyEvents');
+    const overallLaunchStatus = document.getElementById('overallLaunchStatus');
+    const statusText = document.getElementById('statusText');
+
+    const launchSites = [
+      { key: 'primorsko-akhtarsk', name: 'Приморсько-Ахтарськ', region: 'Краснодарський край' },
+      { key: 'yeisk', name: 'Єйськ', region: 'Краснодарський край' },
+      { key: 'hvardiiske', name: 'Гвардійське', region: 'Крим' },
+      { key: 'chauda', name: 'Чауда', region: 'Крим' },
+      { key: 'kacha', name: 'Кача', region: 'Крим' },
+      { key: 'navlia', name: 'Навля', region: 'Брянська область' },
+      { key: 'asovytsia', name: 'Асовица', region: 'Брянська область' },
+      { key: 'khalino', name: 'Халіно', region: 'Курська область' },
+      { key: 'millerovo', name: 'Міллерево', region: 'Ростовська область' },
+      { key: 'berdiansk', name: 'Бердянськ', region: 'Запорізька область' },
+      { key: 'shatalovo', name: 'Шаталово', region: 'Смоленська область' },
+      { key: 'donetsk', name: 'Донецьк', region: 'Донецька область' },
+      { key: 'tsymbulova', name: 'Цимбулова', region: 'Орловська область' },
+      { key: 'shakhty', name: 'Шахти', region: 'Ростовська область' }
+    ];
+
+    let currentLaunchState = {
+      activeSites: {},
+      recentLaunches: [],
+      updatedAt: null,
+      uavMapTargets: [],
+      cruiseMissileTargets: [],
+      ballisticTargets: []
+    };
+    const UAV_TTL_MS = 30 * 60 * 1000;
+    const CRUISE_TTL_MS = 5 * 60 * 1000;
+    const BALLISTIC_TTL_MS = 2 * 60 * 1000;
+    const LAUNCH_EVENT_TTL_MS = 60 * 60 * 1000;
+    const uavTextureUrl = 'shahedred 4.png';
+    const cruiseTextureUrl = encodeURI('крилатаorange 1.png');
+    const ballisticTextureUrl = encodeURI('балистика 1.png');
+    const uaBounds = { lonW: 22.35, lonE: 40.45, latS: 44.15, latN: 52.55 };
+    const approxKmPerNormX = 1200;
+
+    /**
+     * Балістика: лише низ карти (південний схід) і верх (північно-східний напрямок).
+     * y на екрані зростає вниз: y ≥ 0.5 — низ, інакше — верх.
+     */
+    function ballisticApproachDelta(point, standoffNorm, j1, j2) {
+      const jitter = (j1 - 0.5) * 0.008;
+      const jitterY = (j2 - 0.5) * 0.008;
+      const d = standoffNorm;
+      const seK = 0.70710678;
+
+      if (point.y >= 0.5) {
+        const maxE = Math.max(0.012, 0.96 - point.x);
+        const maxS = Math.max(0.012, 0.97 - point.y);
+        const leg = d * seK;
+        return {
+          dx: Math.min(leg + jitter * 0.45, maxE),
+          dy: Math.min(leg + jitterY * 0.45, maxS)
+        };
+      }
+      const maxNorth = Math.max(0.01, point.y - 0.02);
+      return {
+        dx: Math.min(d * 0.72 + jitter, Math.max(0.012, 0.96 - point.x)),
+        dy: -Math.min(d * 0.58 + Math.abs(jitterY), maxNorth)
+      };
+    }
+
+    siteWatermark.textContent = siteUrl.replace(/^https?:\/\//, '');
+    mapImage.src = mapUrl;
+
+    function seededJitter(seed) {
+      let s = seed | 0;
+      s = (s * 9301 + 49297) % 233280;
+      return s / 233280;
+    }
+
+    function latLonToPoint(lat, lon) {
+      const x = (Number(lon) - uaBounds.lonW) / (uaBounds.lonE - uaBounds.lonW);
+      const y = (uaBounds.latN - Number(lat)) / (uaBounds.latN - uaBounds.latS);
+      return { x, y };
+    }
+
+    const MAP_ICON_MOBILE_DIV = 2.2;
+    function mapIconHalfPx(kind) {
+      const narrow = typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 768px)').matches;
+      const w = kind === 'ballistic' ? 28 : 26;
+      const side = narrow ? w / MAP_ICON_MOBILE_DIV : w;
+      return side / 2;
+    }
+
+    function getRowTimestampMs(row) {
+      const rawTs = Number(row?.lastUpdateTs ?? row?.createdAtTs ?? 0);
+      return Number.isFinite(rawTs) ? rawTs * 1000 : 0;
+    }
+
+    function getFreshTargets(rows, ttlMs) {
+      const nowMs = Date.now();
+      if (!Array.isArray(rows)) return [];
+      return rows.filter((row) => {
+        const tsMs = getRowTimestampMs(row);
+        return tsMs > 0 && (nowMs - tsMs) <= ttlMs;
+      });
+    }
+
+    function getFreshLaunchEntries(launches, ttlMs) {
+      const nowMs = Date.now();
+      if (!Array.isArray(launches)) return [];
+      return launches.filter((entry) => {
+        const raw = Number(entry?.launchedAtTs ?? 0);
+        const tsMs = Number.isFinite(raw) ? raw * 1000 : 0;
+        return tsMs > 0 && (nowMs - tsMs) <= ttlMs;
+      });
+    }
+
+    function activeSitesFromLaunchEntries(launches) {
+      const out = {};
+      launchSites.forEach((s) => {
+        out[s.key] = false;
+      });
+      launches.forEach((e) => {
+        const k = e && e.siteKey;
+        if (k && Object.prototype.hasOwnProperty.call(out, k)) {
+          out[k] = true;
+        }
+      });
+      return out;
+    }
+
+    function renderUavs() {
+      uavLayer.querySelectorAll('.uav-icon').forEach((el) => el.remove());
+      const targets = getFreshTargets(currentLaunchState.uavMapTargets, UAV_TTL_MS);
+      let iconCount = 0;
+      const maxIcons = 260;
+      targets.forEach((row, rowIndex) => {
+        if (row.lat == null || row.lon == null) return;
+        const point = latLonToPoint(row.lat, row.lon);
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+        const count = Math.min(Number(row.count) || 0, 60);
+        const snakeMode = count > 10;
+        const columns = snakeMode ? 2 : Math.min(5, Math.max(2, Math.ceil(Math.sqrt(count))));
+        const spacingPx = 16;
+        for (let i = 0; i < count; i += 1) {
+          if (iconCount >= maxIcons) return;
+          const j1 = seededJitter((rowIndex + 1) * 991 + i * 17);
+          const j2 = seededJitter((rowIndex + 1) * 353 + i * 73);
+          // Ставимо БпЛА зі сходу цілі, але не виносимо занадто вправо з мапи.
+          const desiredEastOffset = 0.015 + (j1 * 0.01); // ~12-20 км умовно
+          const maxAllowedEastOffset = Math.max(0.012, 0.95 - point.x);
+          const eastOffset = Math.min(desiredEastOffset, maxAllowedEastOffset);
+          const yOffset = (j2 - 0.5) * 0.014;
+          let sideCorrection = 0;
+          if (point.x < 0.5) {
+            sideCorrection = 0.045; // базовий зсув для лівої частини
+            if (point.x < 0.3) {
+              sideCorrection = 0.065; // крайня ліва частина ще правіше
+              if (point.x < 0.2) {
+                sideCorrection = 0.093; // найлівіша зона ще трохи правіше
+              }
+            }
+          } else {
+            sideCorrection = -0.008; // праву частину трохи лівіше
+          }
+          const sx = Math.max(0.02, Math.min(0.98, point.x + eastOffset + sideCorrection));
+          const sy = Math.max(0.02, Math.min(0.98, point.y + yOffset));
+          // Базова текстура дивиться "на північ", тому зсуваємо кут на +90.
+          const angle = Math.atan2((point.y - sy), (point.x - sx)) * (180 / Math.PI) + 90;
+          let xSpreadPx = 0;
+          let ySpreadPx = 0;
+          if (snakeMode) {
+            // Для великих груп тягнемо "змійку" назад по траєкторії польоту.
+            const cityX = point.x * fittedWidth;
+            const cityY = point.y * fittedHeight;
+            const baseX = sx * fittedWidth;
+            const baseY = sy * fittedHeight;
+            let vx = cityX - baseX;
+            let vy = cityY - baseY;
+            const len = Math.hypot(vx, vy) || 1;
+            vx /= len;
+            vy /= len;
+            const tailX = -vx;
+            const tailY = -vy;
+            const normalX = -tailY;
+            const normalY = tailX;
+            const side = i % 2 === 0 ? -1 : 1;
+            const chainIndex = Math.floor(i / 2);
+            const step = 8; // коротша змійка
+            const lateral = 6;
+            xSpreadPx = tailX * chainIndex * step + normalX * side * lateral;
+            ySpreadPx = tailY * chainIndex * step + normalY * side * lateral;
+          } else {
+            const rowIdx = Math.floor(i / columns);
+            const colIdx = i % columns;
+            const centerCol = (columns - 1) / 2;
+            xSpreadPx = (colIdx - centerCol) * spacingPx;
+            ySpreadPx = rowIdx * spacingPx;
+          }
+          const img = document.createElement('img');
+          img.src = uavTextureUrl;
+          img.className = 'uav-icon';
+          img.alt = '';
+          const hU = mapIconHalfPx('uav');
+          img.style.left = `${sx * fittedWidth - hU + xSpreadPx}px`;
+          img.style.top = `${sy * fittedHeight - hU + ySpreadPx}px`;
+          img.style.transform = `rotate(${angle}deg)`;
+          uavLayer.appendChild(img);
+          iconCount += 1;
+        }
+      });
+      renderCruiseMissiles();
+      renderBallistics();
+    }
+
+    function renderCruiseMissiles() {
+      uavLayer.querySelectorAll('.cruise-icon').forEach((el) => el.remove());
+      const cruise = getFreshTargets(currentLaunchState.cruiseMissileTargets, CRUISE_TTL_MS);
+      let iconCount = uavLayer.querySelectorAll('.uav-icon, .cruise-icon').length;
+      const maxIcons = 260;
+      cruise.forEach((row, rowIndex) => {
+        if (row.lat == null || row.lon == null) return;
+        const point = latLonToPoint(row.lat, row.lon);
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+        const count = Math.min(Number(row.count) || 0, 60);
+        const snakeMode = count > 10;
+        const columns = snakeMode ? 2 : Math.min(5, Math.max(2, Math.ceil(Math.sqrt(count))));
+        const spacingPx = 16;
+        for (let i = 0; i < count; i += 1) {
+          if (iconCount >= maxIcons) return;
+          const j1 = seededJitter((rowIndex + 1) * 877 + i * 19);
+          const j2 = seededJitter((rowIndex + 1) * 331 + i * 71);
+          const desiredEastOffset = 0.015 + (j1 * 0.01);
+          const maxAllowedEastOffset = Math.max(0.012, 0.95 - point.x);
+          const eastOffset = Math.min(desiredEastOffset, maxAllowedEastOffset);
+          const yOffset = (j2 - 0.5) * 0.014;
+          let sideCorrection = 0;
+          if (point.x < 0.5) {
+            sideCorrection = 0.045;
+            if (point.x < 0.3) sideCorrection = 0.065;
+            if (point.x < 0.2) sideCorrection = 0.093;
+          } else {
+            sideCorrection = -0.008;
+          }
+          const sx = Math.max(0.02, Math.min(0.98, point.x + eastOffset + sideCorrection));
+          const sy = Math.max(0.02, Math.min(0.98, point.y + yOffset));
+          let xSpreadPx = 0;
+          let ySpreadPx = 0;
+          if (snakeMode) {
+            const cityX = point.x * fittedWidth;
+            const cityY = point.y * fittedHeight;
+            const baseX = sx * fittedWidth;
+            const baseY = sy * fittedHeight;
+            let vx = cityX - baseX;
+            let vy = cityY - baseY;
+            const len = Math.hypot(vx, vy) || 1;
+            vx /= len;
+            vy /= len;
+            const tailX = -vx;
+            const tailY = -vy;
+            const normalX = -tailY;
+            const normalY = tailX;
+            const side = i % 2 === 0 ? -1 : 1;
+            const chainIndex = Math.floor(i / 2);
+            const step = 8;
+            const lateral = 6;
+            xSpreadPx = tailX * chainIndex * step + normalX * side * lateral;
+            ySpreadPx = tailY * chainIndex * step + normalY * side * lateral;
+          } else {
+            const rowIdx = Math.floor(i / columns);
+            const colIdx = i % columns;
+            const centerCol = (columns - 1) / 2;
+            xSpreadPx = (colIdx - centerCol) * spacingPx;
+            ySpreadPx = rowIdx * spacingPx;
+          }
+          const cx = sx * fittedWidth + xSpreadPx;
+          const cy = sy * fittedHeight + ySpreadPx;
+          const tx = point.x * fittedWidth;
+          const ty = point.y * fittedHeight;
+          const angle = Math.atan2(ty - cy, tx - cx) * (180 / Math.PI) + 90;
+          const img = document.createElement('img');
+          img.src = cruiseTextureUrl;
+          img.className = 'cruise-icon';
+          img.alt = '';
+          const hC = mapIconHalfPx('uav');
+          img.style.left = `${sx * fittedWidth - hC + xSpreadPx}px`;
+          img.style.top = `${sy * fittedHeight - hC + ySpreadPx}px`;
+          img.style.transform = `rotate(${angle}deg)`;
+          uavLayer.appendChild(img);
+          iconCount += 1;
+        }
+      });
+    }
+
+    function renderBallistics() {
+      uavLayer.querySelectorAll('.ballistic-icon').forEach((el) => el.remove());
+      const ballistic = getFreshTargets(currentLaunchState.ballisticTargets, BALLISTIC_TTL_MS);
+      let iconCount = uavLayer.querySelectorAll('.uav-icon, .cruise-icon, .ballistic-icon').length;
+      const maxIcons = 300;
+      ballistic.forEach((row, rowIndex) => {
+        if (row.lat == null || row.lon == null) return;
+        const point = latLonToPoint(row.lat, row.lon);
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) return;
+        const standoffKm = Number(row.standoffKm) || 100;
+        const eastNorm = Math.min(0.11, standoffKm / approxKmPerNormX);
+        const count = Math.min(Number(row.count) || 0, 40);
+        const snakeMode = count > 10;
+        const spacingPx = 14;
+        for (let i = 0; i < count; i += 1) {
+          if (iconCount >= maxIcons) return;
+          const j1 = seededJitter((rowIndex + 1) * 701 + i * 31);
+          const j2 = seededJitter((rowIndex + 1) * 409 + i * 59);
+          const appr = ballisticApproachDelta(point, eastNorm, j1, j2);
+          const sx = Math.max(0.02, Math.min(0.98, point.x + appr.dx));
+          const sy = Math.max(0.02, Math.min(0.98, point.y + appr.dy));
+          let xSpreadPx = 0;
+          let ySpreadPx = 0;
+          if (snakeMode) {
+            const cityX = point.x * fittedWidth;
+            const cityY = point.y * fittedHeight;
+            const baseX = sx * fittedWidth;
+            const baseY = sy * fittedHeight;
+            let vx = cityX - baseX;
+            let vy = cityY - baseY;
+            const len = Math.hypot(vx, vy) || 1;
+            vx /= len;
+            vy /= len;
+            const tailX = -vx;
+            const tailY = -vy;
+            const normalX = -tailY;
+            const normalY = tailX;
+            const side = i % 2 === 0 ? -1 : 1;
+            const chainIndex = Math.floor(i / 2);
+            const step = 7;
+            const lateral = 5;
+            xSpreadPx = tailX * chainIndex * step + normalX * side * lateral;
+            ySpreadPx = tailY * chainIndex * step + normalY * side * lateral;
+          } else {
+            const columns = 2;
+            const rowIdx = Math.floor(i / columns);
+            const colIdx = i % columns;
+            xSpreadPx = (colIdx - 0.5) * spacingPx;
+            ySpreadPx = rowIdx * spacingPx;
+          }
+          const cx = sx * fittedWidth + xSpreadPx;
+          const cy = sy * fittedHeight + ySpreadPx;
+          const tx = point.x * fittedWidth;
+          const ty = point.y * fittedHeight;
+          const angle = Math.atan2(ty - cy, tx - cx) * (180 / Math.PI) + 90;
+          const img = document.createElement('img');
+          img.src = ballisticTextureUrl;
+          img.className = 'ballistic-icon';
+          img.dataset.ballistic = '1';
+          img.alt = '';
+          const hB = mapIconHalfPx('ballistic');
+          img.style.left = `${sx * fittedWidth - hB + xSpreadPx}px`;
+          img.style.top = `${sy * fittedHeight - hB + ySpreadPx}px`;
+          img.style.transform = `rotate(${angle}deg)`;
+          uavLayer.appendChild(img);
+          iconCount += 1;
+        }
+      });
+    }
+
+    function syncUkraineOverlay() {
+      ukraineOverlay.style.width = `${fittedWidth}px`;
+      ukraineOverlay.style.height = `${fittedHeight}px`;
+      ukraineOverlay.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+    }
+
+    function renderLaunches() {
+      const freshLaunches = getFreshLaunchEntries(
+        currentLaunchState.recentLaunches,
+        LAUNCH_EVENT_TTL_MS
+      );
+      const effectiveActiveSites = activeSitesFromLaunchEntries(freshLaunches);
+
+      siteList.innerHTML = '';
+      launchSites.forEach((site) => {
+        const isActive = Boolean(effectiveActiveSites[site.key]);
+        const li = document.createElement('li');
+        li.className = 'site-item';
+        li.innerHTML = `
+          <div class="site-line">
+            <div>
+              <div class="site-name">${site.name}</div>
+              <div class="site-region">${site.region}</div>
             </div>
-        </div>
+            <span class="launch-badge ${isActive ? 'active' : 'none'}">
+              ${isActive ? 'Запуск є' : 'Запуску немає'}
+            </span>
+          </div>
+        `;
+        siteList.appendChild(li);
+      });
 
-        <div class="btn-group">
-            <a href="https://t.me/manitoringkiev" target="_blank" class="neon-btn btn-tg">КАНАЛ</a>
-            <a href="https://t.me/monitorkiev_bot" target="_blank" class="neon-btn btn-support">SUPPORT</a>
-            <a href="https://send.monobank.ua/твоя_банка" target="_blank" class="neon-btn btn-donate">ДОНАТ ₴</a>
-        </div>
-    </header>
-
-    <div class="marquee-container">
-        <div class="marquee-text">
-            СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV ДЛЯ ОПЕРАТИВНИХ ОПОВІЩЕНЬ... ПІДТРИМУЙТЕ ЗСУ...
-        </div>
-    </div>
-
-    <nav class="nav-container">
-        <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
-        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
-        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
-        <button class="nav-btn" onclick="tab('m4', this)">📻 РАДІО</button>
-        <button class="nav-btn" onclick="tab('m5', this)">⛈️ ПОГОДА</button>
-    </nav>
-
-    <main class="viewport">
-        <iframe id="m1" class="active" src="https://alerts.in.ua/?theme=dark"></iframe>
-        <iframe id="m2" src="https://deepstatemap.live/"></iframe>
-        <iframe id="m3" src="https://globe.adsbexchange.com/"></iframe>
-        <iframe id="m4" src="https://websdr.ewi.utwente.nl:8901/?tune=8847usb"></iframe>
-        <iframe id="m5" src="https://www.windy.com/"></iframe>
-    </main>
-</div>
-
-<script>
-    function tab(id, btn) {
-        document.querySelectorAll('iframe, .nav-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-    }
-    function updateClock() {
-        document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { 
-            timeZone: 'Europe/Kyiv', 
-            hour12: false 
+      eventsList.innerHTML = '';
+      const launches = freshLaunches;
+      if (!launches.length) {
+        emptyEvents.style.display = 'block';
+      } else {
+        emptyEvents.style.display = 'none';
+        launches.slice(0, 40).forEach((entry) => {
+          const li = document.createElement('li');
+          li.className = 'event-item';
+          li.innerHTML = `
+            <div><strong>${entry.siteName || 'Невідома локація'}</strong> — ${entry.region || '—'}</div>
+            <small>${entry.launchedAt || 'час не вказано'} • ${entry.status || 'Запуск є'}</small>
+          `;
+          eventsList.appendChild(li);
         });
-    }
-    setInterval(updateClock, 1000); updateClock();
-</script>
+      }
 
+      const hasActive = launchSites.some((site) => Boolean(effectiveActiveSites[site.key]));
+      overallLaunchStatus.textContent = hasActive ? 'Запуск є' : 'Запуску немає';
+      overallLaunchStatus.classList.toggle('active', hasActive);
+
+      if (currentLaunchState.updatedAt) {
+        statusText.textContent = `Актуальна, орієнтовна мапа з рухом ворожих цілей в повітряному просторі України. Оновлено: ${currentLaunchState.updatedAt}`;
+      }
+    }
+
+    async function fetchLaunches() {
+      try {
+        const response = await fetch(`${launchesApiUrl}?t=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Cannot load launches.json');
+        const payload = await response.json();
+        currentLaunchState = {
+          activeSites: payload.activeSites || {},
+          recentLaunches: payload.recentLaunches || [],
+          updatedAt: payload.updatedAt || null,
+          uavMapTargets: payload.uavMapTargets || [],
+          cruiseMissileTargets: payload.cruiseMissileTargets || [],
+          ballisticTargets: payload.ballisticTargets || []
+        };
+        renderLaunches();
+        renderUavs();
+      } catch (err) {
+        currentLaunchState = currentLaunchState || {
+          activeSites: {},
+          recentLaunches: [],
+          updatedAt: null,
+          uavMapTargets: [],
+          cruiseMissileTargets: [],
+          ballisticTargets: []
+        };
+        renderLaunches();
+        renderUavs();
+      }
+    }
+
+    renderLaunches();
+    renderUavs();
+    fetchLaunches();
+    setInterval(fetchLaunches, 5000);
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) fetchLaunches();
+    });
+    window.addEventListener('focus', fetchLaunches);
+
+    const SA_PRESENCE_BASE = (() => {
+      try {
+        const b = typeof window !== 'undefined' ? window.SA_PRESENCE_BASE : '';
+        const s = b != null ? String(b).trim() : '';
+        return s ? s.replace(/\/+$/, '') : '';
+      } catch (_) {
+        return '';
+      }
+    })();
+    const PRESENCE_URL = SA_PRESENCE_BASE ? `${SA_PRESENCE_BASE}/api/presence` : '/api/presence';
+    const PRESENCE_PING_MS = 8000;
+    const saPresenceClientId = (() => {
+      const k = 'sa_presence_client_id';
+      try {
+        let v = localStorage.getItem(k);
+        if (v && v.length > 8) return v;
+        v = `${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+        localStorage.setItem(k, v);
+        return v;
+      } catch (_) {
+        return `${Date.now()}_${Math.random().toString(36).slice(2, 12)}`;
+      }
+    })();
+    async function pingSaPresence() {
+      const el = document.getElementById('onlineNow');
+      if (!el) return;
+      try {
+        const u = `${PRESENCE_URL}?client_id=${encodeURIComponent(saPresenceClientId)}&t=${Date.now()}`;
+        const r = await fetch(u, { cache: 'no-store' });
+        if (!r.ok) throw new Error(String(r.status));
+        const j = await r.json();
+        const n = Number(j.onlineNow);
+        el.textContent = Number.isFinite(n) ? String(n) : '—';
+      } catch (_) {
+        el.textContent = '—';
+      }
+    }
+    pingSaPresence();
+    setInterval(pingSaPresence, PRESENCE_PING_MS);
+
+    let scale = 1;
+    let minScale = 1;
+    let maxScale = 4;
+    let translateX = 0;
+    let translateY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let pinchStartDistance = 0;
+    let pinchStartScale = 1;
+    let imgNaturalWidth = 1600;
+    let imgNaturalHeight = 900;
+    let fittedWidth = 0;
+    let fittedHeight = 0;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function isNarrowMapViewport() {
+      return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 768px)').matches;
+    }
+
+    function getFitSize() {
+      const vw = viewer.clientWidth;
+      const imgRatio = imgNaturalWidth / imgNaturalHeight;
+      if (isNarrowMapViewport()) {
+        fittedWidth = vw;
+        fittedHeight = vw / imgRatio;
+        return;
+      }
+      const vh = viewer.clientHeight;
+      const viewRatio = vw / vh;
+      if (imgRatio > viewRatio) {
+        fittedWidth = vw;
+        fittedHeight = vw / imgRatio;
+      } else {
+        fittedHeight = vh;
+        fittedWidth = vh * imgRatio;
+      }
+    }
+
+    function constrainPan() {
+      const scaledWidth = fittedWidth * scale;
+      const scaledHeight = fittedHeight * scale;
+      const maxX = Math.max(0, (scaledWidth - viewer.clientWidth) / 2);
+      const maxY = Math.max(0, (scaledHeight - viewer.clientHeight) / 2);
+
+      translateX = clamp(translateX, -maxX, maxX);
+      translateY = clamp(translateY, -maxY, maxY);
+    }
+
+    function applyTransform() {
+      getFitSize();
+      if (isNarrowMapViewport()) {
+        viewer.style.height = `${Math.max(1, Math.round(fittedHeight))}px`;
+      } else {
+        viewer.style.height = '';
+      }
+      constrainPan();
+      mapImage.style.width = fittedWidth + 'px';
+      mapImage.style.height = fittedHeight + 'px';
+      mapImage.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+      uavLayer.style.width = fittedWidth + 'px';
+      uavLayer.style.height = fittedHeight + 'px';
+      uavLayer.style.transform = `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+      renderUavs();
+      syncUkraineOverlay();
+    }
+
+    function resetView() {
+      scale = 1;
+      translateX = 0;
+      translateY = 0;
+      applyTransform();
+    }
+
+    function zoom(delta) {
+      scale = clamp(scale + delta, minScale, maxScale);
+      if (scale === 1) {
+        translateX = 0;
+        translateY = 0;
+      }
+      applyTransform();
+    }
+
+    function distance(t1, t2) {
+      const dx = t2.clientX - t1.clientX;
+      const dy = t2.clientY - t1.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    mapImage.addEventListener('load', () => {
+      imgNaturalWidth = mapImage.naturalWidth || 1600;
+      imgNaturalHeight = mapImage.naturalHeight || 900;
+      resetView();
+    });
+
+    zoomInBtn.addEventListener('click', () => zoom(0.25));
+    zoomOutBtn.addEventListener('click', () => zoom(-0.25));
+    resetBtn.addEventListener('click', resetView);
+
+    openImageBtn.addEventListener('click', () => {
+      window.open(mapImage.src, '_blank');
+    });
+
+    fullscreenBtn.addEventListener('click', async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await viewer.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (e) {
+        alert('Повноекранний режим може не підтримуватися у цьому браузері.');
+      }
+    });
+
+    viewer.addEventListener('mousedown', (e) => {
+      if (scale <= 1) return;
+      isDragging = true;
+      startX = e.clientX - translateX;
+      startY = e.clientY - translateY;
+      viewer.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      translateX = e.clientX - startX;
+      translateY = e.clientY - startY;
+      applyTransform();
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      viewer.style.cursor = 'default';
+    });
+
+    viewer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.15 : -0.15;
+      zoom(delta);
+    }, { passive: false });
+
+    viewer.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1 && scale > 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - translateX;
+        startY = e.touches[0].clientY - translateY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        pinchStartDistance = distance(e.touches[0], e.touches[1]);
+        pinchStartScale = scale;
+      }
+    }, { passive: true });
+
+    viewer.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging && scale > 1) {
+        translateX = e.touches[0].clientX - startX;
+        translateY = e.touches[0].clientY - startY;
+        applyTransform();
+      } else if (e.touches.length === 2) {
+        const newDistance = distance(e.touches[0], e.touches[1]);
+        const ratio = newDistance / pinchStartDistance;
+        scale = clamp(pinchStartScale * ratio, minScale, maxScale);
+        applyTransform();
+      }
+    }, { passive: true });
+
+    viewer.addEventListener('touchend', () => {
+      if (event.touches && event.touches.length === 0) {
+        isDragging = false;
+      }
+    });
+
+    window.addEventListener('resize', applyTransform);
+    document.addEventListener('fullscreenchange', applyTransform);
+
+    // Первая инициализация, если картинка уже закеширована
+    if (mapImage.complete) {
+      imgNaturalWidth = mapImage.naturalWidth || 1600;
+      imgNaturalHeight = mapImage.naturalHeight || 900;
+      resetView();
+    }
+
+      <script>
+    const API_URL = 'https://api.ukrainealarm.com/api/v3/alerts/1';
+    const MY_API_KEY = 'eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9'; // Встав ключ сюди
+
+    async function checkAlerts() {
+        const box = document.getElementById('status-box');
+        box.innerText = "ПІДКЛЮЧЕННЯ...";
+        
+        try {
+            const response = await fetch(API_URL, {
+                headers: {
+                    'Authorization': MY_API_KEY,
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                // Якщо помилка, покажемо код помилки прямо на екрані
+                box.innerText = "ПОМИЛКА: " + response.status;
+                box.style.color = "yellow";
+                return;
+            }
+
+            const data = await response.json();
+            // Логіка перевірки тривоги
+            if (data && data.length > 0 && data[0].activeAlerts.length > 0) {
+                box.innerText = "УВАГА: ТРИВОГА";
+                box.className = "status-box active";
+            } else {
+                box.innerText = "СТАТУС: СПОКІЙНО";
+                box.className = "status-box";
+            }
+        } catch (e) {
+            box.innerText = "ПОМИЛКА СЕРВЕРА";
+            console.error(e);
+        }
+    }
+
+    setInterval(checkAlerts, 15000);
+    checkAlerts();
+</script>
 </body>
 </html>
