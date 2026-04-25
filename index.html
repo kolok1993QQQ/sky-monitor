@@ -73,14 +73,15 @@
             const data = await response.json();
             if (data.items && data.items.length > 0) {
                 const latestPost = data.items[0].title;
+                // Дублюємо текст в обидва блоки
                 document.getElementById('tg-content').innerText = latestPost;
-                if (latestPost.toLowerCase().includes("груп") || latestPost.toLowerCase().includes("ціль")) {
-                    document.getElementById('targets-content').innerText = latestPost;
-                }
+                document.getElementById('targets-content').innerText = latestPost;
             }
-        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг працює"; }
+        } catch(e) { 
+            document.getElementById('tg-content').innerText = "Моніторинг активний"; 
+        }
     }
-    loadTg(); setInterval(loadTg, 60000);
+    loadTg(); setInterval(loadTg, 45000); // Оновлення кожні 45 секунд для швидкої реакції
 
     async function loadApi() {
         try {
