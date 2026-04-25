@@ -67,6 +67,28 @@
     letter-spacing: 1px;
 }
 
+/* БІЖУЧИЙ РЯДОК */
+        .marquee-container {
+            background: #000; color: var(--accent); padding: 6px 0;
+            font-size: 11px; font-weight: 800; border-bottom: 1px solid #30363d;
+            overflow: hidden; white-space: nowrap;
+        }
+        .marquee-text { display: inline-block; animation: marquee 25s linear infinite; }
+        @keyframes marquee { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+        /* КНОПКИ */
+        .btn-group { margin-left: auto; display: flex; gap: 10px; }
+        .neon-btn {
+            padding: 10px 14px; border-radius: 8px; text-decoration: none; 
+            font-weight: 900; font-size: 11px; transition: 0.3s;
+            text-transform: uppercase; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .btn-tg { background: var(--tg-blue); box-shadow: 0 0 15px rgba(0, 136, 204, 0.4); }
+        .btn-support { background: var(--support-green); color: #000; box-shadow: 0 0 15px rgba(57, 211, 83, 0.4); }
+        .btn-donate { background: var(--gold); color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
+        .neon-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+        
+
 @keyframes pulse-red {
     0% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.3; transform: scale(1.2); }
@@ -117,7 +139,13 @@
         <div class="marquee-text">
             СЛАВА УКРАЇНІ! 🇺🇦 СИСТЕМА ПРАЦЮЄ В РЕЖИМІ РЕАЛЬНОГО ЧАСУ... ПІДПИСУЙТЕСЬ НА ТЕЛЕГРАМ КАНАЛ @MANITORINGKIEV ДЛЯ ОПЕРАТИВНИХ ОПОВІЩЕНЬ... ПІДТРИМУЙТЕ ЗСУ...
         </div>
-    </div>   
+    </div> 
+
+    <nav class="nav-container">
+        <button class="nav-btn active" onclick="tab('m1', this)">🚨 ТРИВОГИ</button>
+        <button class="nav-btn" onclick="tab('m2', this)">⚔️ КАРТА</button>
+        <button class="nav-btn" onclick="tab('m3', this)">✈️ АВІА</button>
+    </nav>
 
 <script>
     function updateClock() {
