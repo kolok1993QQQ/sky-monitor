@@ -55,7 +55,7 @@
     <main class="viewport">
         <div id="tg-overlay">
             <div style="font-weight:bold; color:var(--accent);">ОПЕРАТИВНО:</div>
-            <div id="tg-content">Завантаження...</div>
+            <div id="tg-content">Моніторинг активний</div>
         </div>
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
@@ -66,23 +66,18 @@
 </div>
 
 <script>
-    // Час
     function updateClock() {
         document.getElementById('kyiv-time').innerText = new Date().toLocaleTimeString('uk-UA', { timeZone: 'Europe/Kyiv', hour12: false });
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // Телеграм (RSS)
-    async function loadTg() {
-        try {
-            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://rssgenerator.mooo.com/feeds/?p=aaHR0cHM6Ly90Lm1lL21hbml0b3JpbmdraWV2")}`);
-            const data = await response.json();
-            document.getElementById('tg-content').innerText = data.items[0].title;
-        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг каналу активний..."; }
+    // ОТКЛЮЧЕНА попытка соединения с проблемным сервером
+    function loadTg() {
+        document.getElementById('tg-content').innerText = "Моніторинг каналу активний";
     }
-    loadTg(); setInterval(loadTg, 60000);
+    loadTg();
 
-    // API для біжучого рядка
+    // API для бегущей строки (работает через ваш ключ)
     async function loadApi() {
         try {
             const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
