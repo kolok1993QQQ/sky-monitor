@@ -2,59 +2,45 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <title>Карта повітряних тривог України</title>
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sky-monitor.fun/">
-    <meta property="og:title" content="Карта повітряних тривог України">
-    <meta property="og:description" content="Карта повітряних тривог України. Моніторинг повітряних тривог та авіації.">
-    <meta property="og:image" content="https://sky-monitor.fun/logo.jpg">
-    
-    <link rel="canonical" href="https://sky-monitor.fun">
-    <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
-
+    <title>Карта моніторингу</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body, html { margin: 0; padding: 0; height: 100%; background: #000; }
         #map { height: 100vh; width: 100vw; }
-        .leaflet-tile-pane { filter: invert(100%) hue-rotate(180deg) brightness(1.5) contrast(0.8); }
         
-        /* Панель GPS */
-        #gps-panel { position: absolute; top: 10px; left: 10px; z-index: 1000; background: rgba(0,0,0,0.8); color: #00f2ff; padding: 10px; border: 1px solid #00f2ff; font-family: monospace; }
+        /* Стиль панелі як на скриншоті */
+        .controls { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; background: #1a1a1a; padding: 10px; border-radius: 5px; color: #fff; display: flex; gap: 10px; border: 1px solid #444; }
+        .btn { background: #333; padding: 5px 15px; border-radius: 3px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="gps-panel">GPS MONITORING ACTIVE</div>
-    <div id="map"></div>
+<div class="controls">
+    <div>Рух об'єктів:</div>
+    <div class="btn" onclick="toggleAlerts()">Тривоги</div>
+    <div class="btn">ПС ЗСУ</div>
+</div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map').setView([49.0, 31.0], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+<div id="map"></div>
 
-        const API_KEY = "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9";
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map').setView([49.0, 31.0], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // Функція для відображення GPS цілі
-        function addTarget(lat, lng, name) {
-            L.marker([lat, lng]).addTo(map).bindPopup(name).openPopup();
-            document.getElementById('gps-panel').innerHTML += `<br>📍 ${name}: ${lat}, ${lng}`;
-        }
+    const API_KEY = "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9";
 
-        // Автоматичне підключення API
-        async function checkAlerts() {
-            try {
-                const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-                    headers: { "Authorization": "Bearer " + API_KEY }
-                });
-                const data = await response.json();
-            } catch(e) { console.error("API Error"); }
-        }
+    // Функція відображення тривог (червоні зони)
+    async function toggleAlerts() {
+        const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
+            headers: { "Authorization": "Bearer " + API_KEY }
+        });
+        const data = await response.json();
         
-        checkAlerts();
-        setInterval(checkAlerts, 30000);
-    </script>
+        // Тут код перебирає регіони і малює червоні полігони
+        alert("Запит до API відправлено. Дані отримано: " + data.length + " активних тривог.");
+        // Додайте сюди логіку L.polygon для фарбування областей
+    }
+</script>
 </body>
 </html>
