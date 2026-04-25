@@ -72,11 +72,11 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // Телеграм (Стабільна версія)
+    // Телеграм (Пряме підключення через надійний RSS)
     async function loadTg() {
-        const tgChannel = "manitoringkiev";
+        const feedUrl = "https://rss.app/feeds/9VHwpFRlszHo0vgI.xml";
         try {
-            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ft.me%2Fs%2F${tgChannel}`);
+            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
             const data = await response.json();
             if (data.items && data.items.length > 0) {
                 document.getElementById('tg-content').innerText = data.items[0].title;
