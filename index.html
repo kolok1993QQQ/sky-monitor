@@ -55,7 +55,7 @@
     <main class="viewport">
         <div id="tg-overlay">
             <div style="font-weight:bold; color:var(--accent);">ОПЕРАТИВНО:</div>
-            <div id="tg-content">Завантаження даних з ТГ...</div>
+            <div id="tg-content">Завантаження...</div>
         </div>
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
@@ -72,21 +72,22 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // Телеграм (Пряме отримання даних)
+    // Телеграм (Стабільна версія)
     async function loadTg() {
         const tgChannel = "manitoringkiev";
         try {
             const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Ft.me%2Fs%2F${tgChannel}`);
             const data = await response.json();
             if (data.items && data.items.length > 0) {
-                // Виводимо заголовок останнього повідомлення
                 document.getElementById('tg-content').innerText = data.items[0].title;
+            } else {
+                document.getElementById('tg-content').innerText = "MONITORING KIEV";
             }
         } catch(e) { 
-            document.getElementById('tg-content').innerText = "Очікування оновлень ТГ..."; 
+            document.getElementById('tg-content').innerText = "MONITORING KIEV"; 
         }
     }
-    loadTg(); setInterval(loadTg, 60000);
+    loadTg(); setInterval(loadTg, 120000); // Оновлення раз на 2 хвилини
 
     // API для біжучого рядка
     async function loadApi() {
