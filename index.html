@@ -54,7 +54,7 @@
     </main>
 
     <div class="marquee-container">
-        <div id="rss-feed" class="marquee-text">Підключення до каналу...</div>
+        <div id="rss-feed" class="marquee-text">Підключення до системи моніторингу...</div>
     </div>
 </div>
 
@@ -65,19 +65,26 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // RSS Лента
+    // Пряме підключення до вашого API
     async function loadNews() {
-        const rssUrl = "https://rssgenerator.mooo.com/feeds/?p=aaHR0cHM6Ly90Lm1lL21hbml0b3JpbmdraWV2";
+        const apiKey = "eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9";
         try {
-            const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
+            const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
+                headers: { "Authorization": "Bearer " + apiKey, "Accept": "application/json" }
+            });
             const data = await response.json();
-            document.getElementById('rss-feed').innerText = data.items.map(i => i.title).join(" | 🇺🇦 | ");
+            
+            if (data.length > 0) {
+                document.getElementById('rss-feed').innerText = "🚨 АКТИВНІ ТРИВОГИ В ОБЛАСТЯХ: " + data.map(a => a.regionName).join(" | ");
+            } else {
+                document.getElementById('rss-feed').innerText = "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
+            }
         } catch(e) {
-            document.getElementById('rss-feed').innerText = "Помилка завантаження новин, спробуйте пізніше.";
+            document.getElementById('rss-feed').innerText = "Очікування сигналу системи...";
         }
     }
     loadNews();
-    setInterval(loadNews, 300000); // Обновление каждые 5 минут
+    setInterval(loadNews, 30000); // Оновлення кожні 30 секунд для актуальності
 </script>
 
 </body>
