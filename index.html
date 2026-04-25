@@ -55,13 +55,13 @@
     <main class="viewport">
         <div id="tg-overlay">
             <div style="font-weight:bold; color:var(--accent);">ОПЕРАТИВНО:</div>
-            <div id="tg-content">Завантаження...</div>
+            <div id="tg-content">Завантаження новин...</div>
         </div>
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
 
     <div class="marquee-container">
-        <div id="rss-feed" class="marquee-text">Підключення...</div>
+        <div id="rss-feed" class="marquee-text">Підключення до системи...</div>
     </div>
 </div>
 
@@ -72,19 +72,17 @@
     }
     setInterval(updateClock, 1000); updateClock();
 
-    // Телеграм (Пряме підключення через надійний RSS)
+    // Телеграм (Надійний RSS)
     async function loadTg() {
-        const feedUrl = "https://rss.app/feeds/9VHwpFRlszHo0vgI.xml";
+        const feedUrl = "https://rss.app/feeds/buVZUROYCKje0Fdt.xml";
         try {
             const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`);
             const data = await response.json();
             if (data.items && data.items.length > 0) {
                 document.getElementById('tg-content').innerText = data.items[0].title;
-            } else {
-                document.getElementById('tg-content').innerText = "MONITORING KIEV";
             }
         } catch(e) { 
-            document.getElementById('tg-content').innerText = "MONITORING KIEV"; 
+            document.getElementById('tg-content').innerText = "Моніторинг активний"; 
         }
     }
     loadTg(); setInterval(loadTg, 120000); // Оновлення раз на 2 хвилини
