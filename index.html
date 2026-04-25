@@ -78,7 +78,7 @@
             const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent("https://rssgenerator.mooo.com/feeds/?p=aaHR0cHM6Ly90Lm1lL21hbml0b3JpbmdraWV2")}`);
             const data = await response.json();
             document.getElementById('tg-content').innerText = data.items[0].title;
-        } catch(e) { document.getElementById('tg-content').innerText = "Очікування новин..."; }
+        } catch(e) { document.getElementById('tg-content').innerText = "Моніторинг каналу активний..."; }
     }
     loadTg(); setInterval(loadTg, 60000);
 
