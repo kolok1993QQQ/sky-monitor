@@ -109,6 +109,25 @@
             animation: icon-blink 1s infinite;
         }
 
+        /* Кнопка КАНАЛ */
+.channel-btn { 
+    background: #ff3333; 
+    color: white; 
+    padding: 5px 15px; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 14px; 
+    border: 1px solid #fff;
+    transition: 0.3s;
+    margin-left: auto; /* Це притискає кнопку в самий правий бік */
+    cursor: pointer;
+}
+
+.channel-btn:hover { 
+    background: #cc0000; 
+}
+
         /* Анімація для мерехтіння іконок (червоний ефект) */
         @keyframes pulse-red {
             0% { fill: #ff0000; filter: drop-shadow(0 0 5px #ff0000); }
@@ -142,6 +161,7 @@
         <div class="monitor-brand">MONITOR<br>UA</div>
         <div id="clock">00:00:00</div>
         <div class="flag"></div>
+        <a href="https://t.me/manitoringkiev" class="channel-btn" target="_blank">КАНАЛ</a>
     </div>
 
     <main class="viewport">
