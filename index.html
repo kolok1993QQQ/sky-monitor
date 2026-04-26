@@ -116,6 +116,20 @@
             100% { fill: #ff0000; filter: drop-shadow(0 0 5px #ff0000); }
         }
 
+        /* Стиль кнопки Канал */
+        .channel-btn { 
+            background: #ff3333; 
+            color: white; 
+            padding: 5px 15px; 
+            border-radius: 5px; 
+            text-decoration: none; 
+            font-weight: bold; 
+            font-size: 14px; 
+            border: 1px solid #fff;
+            transition: 0.3s;
+        }
+        .channel-btn:hover { background: #cc0000; }
+
         /* Прив'язуємо анімацію до іконок в легенді */
         .legend-icon { 
             width: 20px; height: 20px; margin-right: 10px; 
@@ -137,12 +151,11 @@
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="header-panel">
+<div class="header-panel">
         <div class="monitor-brand">MONITOR<br>UA</div>
         <div id="clock">00:00:00</div>
         <div class="flag"></div>
-        <div style="font-size: 18px; font-weight: bold;">МОНІТОРИНГ ПОВІТРЯНИХ ТРИВОГ УКРАЇНИ</div>
+        <a href="https://t.me/manitoringkiev" class="channel-btn" target="_blank">КАНАЛ</a>
     </div>
 
     <main class="viewport">
