@@ -66,7 +66,31 @@
             font-size: 14px; 
             pointer-events: none; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        } 
+        }
+
+        /* Додай цей відступ до прапора, щоб він штовхав кнопки */
+.flag { 
+    width: 40px; 
+    height: 25px; 
+    background: linear-gradient(180deg, #0057b7 50%, #ffd700 50%); 
+    border-radius: 3px; 
+    animation: wave 3s infinite ease-in-out; 
+    margin-right: 20px; /* Збільш це число, щоб кнопки посунулися вправо */
+}
+
+/* Налаштування кнопок */
+.channel-btn { 
+    background: #ff3333; 
+    color: white; 
+    padding: 5px 15px; 
+    border-radius: 5px; 
+    text-decoration: none; 
+    font-weight: bold; 
+    font-size: 14px; 
+    border: 1px solid #fff;
+    margin-left: 10px; /* Відстань між кнопками */
+    cursor: pointer;
+}
 
         /* Заголовок жовтий */
         .legend-title {
