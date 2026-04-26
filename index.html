@@ -48,6 +48,12 @@
         .legend-item { display: flex; align-items: center; margin-bottom: 8px; color: #fff; }
         .legend-icon { width: 20px; height: 20px; margin-right: 10px; fill: #fff; }
         
+        /* МАСКУВАННЯ LEGEND */
+        .hide-original-legend {
+            position: absolute; bottom: 0; left: 0; width: 250px; height: 150px; 
+            background: #000; z-index: 998; pointer-events: none;
+        }
+        
         @media (max-width: 600px) { 
             .legend-block { bottom: 120px !important; left: 10px !important; top: auto !important; padding: 6px; font-size: 10px; } 
             .legend-icon { width: 12px; height: 12px; margin-right: 5px; } 
@@ -78,6 +84,7 @@
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L60 20 L60 60 L80 60 L80 70 L60 70 L60 90 L40 90 L40 70 L20 70 L20 60 L40 60 L40 20 Z M40 80 L30 95 L40 95 Z"/></svg><div>Х-101</div></div>
         </div>
 
+        <div class="hide-original-legend"></div>
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
     </main>
 
