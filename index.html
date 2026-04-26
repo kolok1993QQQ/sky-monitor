@@ -1,375 +1,188 @@
- <!DOCTYPE html>
-
+<!DOCTYPE html>
 <html lang="uk">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
     
-
     <title>Карта повітряних тривог України</title>
-
     
-
     <meta property="og:type" content="website">
-
     <meta property="og:url" content="https://sky-monitor.fun/">
-
     <meta property="og:title" content="Карта повітряних тривог України">
-
     <meta property="og:description" content="Карта повітряних тривог України. Моніторинг повітряних тривог та авіації.">
-
     <meta property="og:image" content="https://sky-monitor.fun/logo.jpg">
-
     
-
     <link rel="canonical" href="https://sky-monitor.fun">
-
     <link rel="icon" href="https://sky-monitor.fun/favicon.ico" type="image/x-icon">
-
     
-
     <style>
-
         :root { --accent: #00f2ff; --bg: #0d1117; --card: rgba(22, 27, 34, 0.85); }
-
         body, html { margin: 0; padding: 0; height: 100%; background: var(--bg); font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; }
-
         .wrapper { display: flex; flex-direction: column; height: 100vh; position: relative; }
 
-
-
         /* ВЕРХНЯ ПАНЕЛЬ */
-
         .header-panel { display: flex; align-items: center; padding: 10px 20px; background: #161b22; border-bottom: 2px solid var(--accent); }
-
         .monitor-brand { color: var(--accent); font-weight: bold; font-size: 14px; margin-right: 20px; line-height: 1.2; }
-
         #clock { color: #ff3333; font-size: 20px; font-weight: bold; margin-right: 20px; }
-
         .flag { width: 40px; height: 25px; background: linear-gradient(180deg, #0057b7 50%, #ffd700 50%); border-radius: 3px; animation: wave 3s infinite ease-in-out; margin-right: 20px; }
-
         @keyframes wave { 0%, 100% { transform: skewY(-2deg); } 50% { transform: skewY(2deg); } }
 
-
-
         .viewport { flex-grow: 1; margin: 8px; border-radius: 15px; overflow: hidden; background: #000; border: 1px solid var(--accent); position: relative; }
-
         iframe { width: 100%; height: 100%; border: none; }
 
-
-
         /* ЛЕГЕНДА */
-
         .legend-block { 
-
             position: absolute !important; 
-
             bottom: 150px !important; 
-
             left: 20px !important; 
-
             top: auto !important;
-
             background: rgba(0, 0, 0, 0.85); 
-
             padding: 12px; 
-
             border-radius: 10px; 
-
             border: 1px solid var(--accent); 
-
             z-index: 9999 !important; 
-
             font-size: 14px; 
-
             pointer-events: none; 
-
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-
         }
-
-
 
         /* Це додає ефект мерехтіння */
-
         @keyframes blink { 
-
             0% { opacity: 1; } 
-
             50% { opacity: 0.5; } 
-
             100% { opacity: 1; } 
-
         }
-
         .legend-block { 
-
             animation: blink 2s infinite; /* Мерехтіння кожні 2 секунди */
-
             position: absolute !important; 
-
             bottom: 150px !important; 
-
             left: 20px !important; 
-
             top: auto !important;
-
             background: rgba(0, 0, 0, 0.85); 
-
             padding: 12px; 
-
             border-radius: 10px; 
-
             border: 1px solid var(--accent); 
-
             z-index: 9999 !important; 
-
             font-size: 14px; 
-
             pointer-events: none; 
-
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-
         } 
 
-
-
         /* Заголовок жовтий */
-
         .legend-title {
-
             text-align: center;
-
             margin-bottom: 10px;
-
             font-weight: bold;
-
             color: #ffde00; /* Жовтий колір */
-
             text-shadow: 0 0 5px #000;
-
         }
-
-
 
         /* Червона обводка з мерехтінням */
-
         @keyframes border-pulse {
-
             0% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
-
             50% { border-color: #770000; box-shadow: 0 0 20px #ff0000; }
-
             100% { border-color: #ff0000; box-shadow: 0 0 10px #ff0000; }
-
         }
-
-
 
         .legend-block { 
-
             position: absolute !important; 
-
             bottom: 150px !important; 
-
             left: 20px !important; 
-
             background: rgba(0, 0, 0, 0.85); 
-
             padding: 15px; 
-
             border-radius: 15px; 
-
             border: 2px solid #ff0000; /* Червона обводка */
-
             animation: border-pulse 2s infinite; /* Мерехтіння рамки */
-
             z-index: 9999 !important; 
-
             font-size: 14px; 
-
             pointer-events: none; 
-
         }
-
-
 
         /* Мерехтіння іконок цілей */
-
         @keyframes icon-blink {
-
             0% { opacity: 1; }
-
             50% { opacity: 0.3; }
-
             100% { opacity: 1; }
-
         }
-
         .legend-icon { 
-
             width: 20px; height: 20px; margin-right: 10px; fill: #ff0000; 
-
             animation: icon-blink 1s infinite;
-
         }
-
-
 
         /* Анімація для мерехтіння іконок (червоний ефект) */
-
         @keyframes pulse-red {
-
             0% { fill: #ff0000; filter: drop-shadow(0 0 5px #ff0000); }
-
             50% { fill: #ff5555; filter: drop-shadow(0 0 10px #ff0000); }
-
             100% { fill: #ff0000; filter: drop-shadow(0 0 5px #ff0000); }
-
         }
-
-        .channel-btn:hover { background: #cc0000; }
-
-
 
         /* Прив'язуємо анімацію до іконок в легенді */
-
         .legend-icon { 
-
             width: 20px; height: 20px; margin-right: 10px; 
-
             animation: pulse-red 1.5s infinite; /* Мерехтіння червоним */
-
         }
-
         
-
         .legend-item { display: flex; align-items: center; margin-bottom: 8px; color: #fff; }
-
         .legend-icon { width: 20px; height: 20px; margin-right: 10px; fill: #fff; }
-
         
-
         @media (max-width: 600px) { 
-
             .legend-block { bottom: 120px !important; left: 10px !important; top: auto !important; padding: 6px; font-size: 10px; } 
-
             .legend-icon { width: 12px; height: 12px; margin-right: 5px; } 
-
         }
-
-
 
         .marquee-container { background: #000; color: var(--accent); padding: 5px 0; font-size: 10px; font-weight: 800; border-bottom: 1px solid #30363d; overflow: hidden; white-space: nowrap; }
-
         .marquee-text { display: inline-block; animation: marquee 30s linear infinite; }
-
         @keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
-
     </style>
-
 </head>
-
 <body>
 
-
-
-<div class="header-panel">
-
+<div class="wrapper">
+    <div class="header-panel">
         <div class="monitor-brand">MONITOR<br>UA</div>
-
         <div id="clock">00:00:00</div>
-
         <div class="flag"></div>
-
     </div>
-
-
 
     <main class="viewport">
-
         <div class="legend-block">
-
             <div class="legend-title">ЦІЛІ ЗАГРОЗ</div>
-
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L60 20 L60 60 L80 60 L80 70 L60 70 L60 90 L40 90 L40 70 L20 70 L20 60 L40 60 L40 20 Z"/></svg><div>Крилаті ракети</div></div>
-
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 20 L80 70 L70 80 L50 70 L30 80 L20 70 Z"/></svg><div>Ударні БпЛА</div></div>
-
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L65 40 L65 80 L35 80 L35 40 Z M45 80 L50 95 L55 80 Z"/></svg><div>Аеробалістичні</div></div>
-
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L65 40 L65 80 L35 80 L35 40 Z M35 70 L25 80 M65 70 L75 80"/></svg><div>Балістичні</div></div>
-
             <div class="legend-item"><svg class="legend-icon" viewBox="0 0 100 100"><path d="M50 5 L60 20 L60 60 L80 60 L80 70 L60 70 L60 90 L40 90 L40 70 L20 70 L20 60 L40 60 L40 20 Z M40 80 L30 95 L40 95 Z"/></svg><div>Х-101</div></div>
-
         </div>
 
-
-
         <iframe src="https://alerts.in.ua/?theme=dark"></iframe>
-
     </main>
 
-
-
     <div class="marquee-container">
-
         <div id="rss-feed" class="marquee-text">Система активна...</div>
-
     </div>
-
 </div>
 
-
-
 <script>
-
     // Час
-
     function updateClock() {
-
         const now = new Date();
-
         document.getElementById('clock').innerText = now.toLocaleTimeString('uk-UA');
-
     }
-
     setInterval(updateClock, 1000);
-
     updateClock();
 
-
-
     // API тривог
-
     async function loadApi() {
-
         try {
-
             const response = await fetch("https://api.ukrainealarm.com/api/v3/alerts", {
-
                 headers: { "Authorization": "Bearer eb5f64ff:206e35375c2c8dc5ef154faefa9f39f9", "Accept": "application/json" }
-
             });
-
             const data = await response.json();
-
             document.getElementById('rss-feed').innerText = data.length > 0 ? "🚨 ТРИВОГИ: " + data.map(a => a.regionName).join(" | ") : "✅ СТАТУС: ТРИВОГ НЕМАЄ | СЛАВА УКРАЇНІ!";
-
         } catch(e) { document.getElementById('rss-feed').innerText = "Система активна..."; }
-
     }
-
     loadApi(); setInterval(loadApi, 3000);
-
 </script>
 
-
-
 </body>
-
 </html>
