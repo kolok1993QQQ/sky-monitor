@@ -71,30 +71,28 @@
         }
 
         /* Індикатор мигання */
-.status-indicator-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Inter', sans-serif;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 10px;
-}
-
-.red-dot {
-    width: 12px;
-    height: 12px;
-    background-color: #ff0000;
-    border-radius: 50%;
-    animation: blink-red 1s infinite;
-    box-shadow: 0 0 8px #ff0000;
-}
-
-@keyframes blink-red {
-    0% { opacity: 1; }
-    50% { opacity: 0.2; }
-    100% { opacity: 1; }
-}
+        .status-indicator-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+            color: #ffde00;
+            margin-right: 20px;
+        }
+        .red-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            animation: blink-red 1s infinite;
+            box-shadow: 0 0 8px #ff0000;
+        }
+        @keyframes blink-red {
+            0% { opacity: 1; }
+            50% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
 
         /* Мерехтіння іконок цілей */
         @keyframes icon-blink {
@@ -146,16 +144,17 @@
 </head>
 <body>
 
-             <div class="status-indicator-container">
-    <div class="red-dot"></div>
-    <span>АКТИВНО</span>
-</div>
-
     <div class="wrapper">
         <div class="header-panel">
             <div class="monitor-brand">MONITOR<br></div>
             <div id="clock">00:00:00</div>
-            <div class="flag"></div>     
+            <div class="flag"></div>
+            
+            <div class="status-indicator-container">
+                <div class="red-dot"></div>
+                <span>АКТИВНО</span>
+            </div>
+            
             <a href="https://t.me/manitoringkiev" class="channel-btn" target="_blank">КАНАЛ</a>
             <a href="https://frames2.payhub.com.ua/moneybox?box_id=589cbce5-320d-4d3c-9abc-c4d388138564" class="channel-btn support-btn" target="_blank">ПУМБ</a>
         </div>
