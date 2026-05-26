@@ -54,6 +54,36 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        /* Анімація обертання градієнта */
+@keyframes border-rotate-red {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+/* Клас для додавання до HTML-елементів */
+.red-glowing-border {
+    position: relative;
+    border-radius: 8px; /* Заокруглення кутів, як у вас */
+    
+    /* Основний трюк: прозора рамка та два градієнти */
+    border: 2px solid transparent;
+    background-image: 
+        /* Перший градієнт - це ваш фон (наприклад, темний) */
+        linear-gradient(#0d1117, #0d1117), 
+        /* Другий градієнт - це червона лінія, що рухається (червоний-прозорий-червоний) */
+        linear-gradient(90deg, transparent, #ff0000, transparent, #ff0000, transparent);
+    
+    /* Налаштування накладання */
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    
+    /* Застосування анімації */
+    animation: border-rotate-red 3s linear infinite;
+    
+    /* Ефект неонового світіння (тінь) */
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
         /* Заголовок жовтий */
         .legend-title {
             text-align: center;
