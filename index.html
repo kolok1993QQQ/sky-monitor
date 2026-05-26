@@ -54,6 +54,28 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        /* Анімація обертання та пульсації */
+@keyframes border-pulse-rotate {
+    0% { background-position: 0% 50%; filter: drop-shadow(0 0 5px #ff0000); }
+    50% { filter: drop-shadow(0 0 15px #ff0000); }
+    100% { background-position: 100% 50%; filter: drop-shadow(0 0 5px #ff0000); }
+}
+
+.red-pulse-border {
+    position: relative;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-image: 
+        linear-gradient(#161b22, #161b22), /* Темний фон панелі */
+        linear-gradient(90deg, #ff0000, transparent, #ff0000); /* Червоний-прозорий */
+    
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    
+    /* Швидша анімація */
+    animation: border-pulse-rotate 2s linear infinite;
+}
+
         /* Анімація обертання градієнта */
 @keyframes border-rotate-red {
     0% { background-position: 0% 50%; }
